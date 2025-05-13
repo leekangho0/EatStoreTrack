@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftData
 
 struct FeedModel: Identifiable {
     let id: Int
@@ -15,4 +16,25 @@ struct FeedModel: Identifiable {
     let create_date: String
     let update_date: String
     let tags: [TagModel]
+}
+
+@Model
+class FeedEntity {
+  @Attribute(.unique) var id: String
+  var content: String
+  var category: CategoryEntity
+  var useYN: Bool
+  var createdDate: Date
+  var updatedDate: Date
+  var tags: [TagEntity]
+  
+  init(content: String, category: CategoryEntity, tags: [TagEntity]) {
+    self.content = content
+    self.id = UUID().uuidString
+    self.category = category
+    self.useYN = true
+    self.createdDate = Date()
+    self.updatedDate = Date()
+    self.tags = tags
+  }
 }
