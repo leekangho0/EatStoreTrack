@@ -5,20 +5,47 @@
 //  Created by drfranken on 5/13/25.
 //
 
+// TODO: 검색조건은 OR 로 합시다
+
+
 import SwiftUI
 
 struct SearchResultView: View {
-    let keyword: String
+  @Environment(\.dismiss) var dismiss
+  let selectedTags: Set<Int>
 
-    var body: some View {
-        VStack {
-            Text("검색 결과 for: \(keyword)")
+  var body: some View {
+    VStack {
+      Text("이 페이지는\nHomeView 완성되면 복붙합시다 ")
+      Text("선택된 태그 id: \(selectedTags)")
 
-        }
-        .navigationTitle("검색 결과")
     }
+    .navigationBarBackButtonHidden(true)
+    .toolbar {
+      ToolbarItem(placement: .navigationBarLeading) {
+        Button {
+          dismiss()
+        } label: {
+          Image(systemName: "chevron.left")
+        }
+      }
+
+      ToolbarItem(placement: .principal) {
+        Text("검색 결과")
+          .font(.headline)
+      }
+
+      ToolbarItemGroup(placement: .navigationBarTrailing) {
+        NavigationLink(destination: SearchResultView(selectedTags: selectedTags)) {
+          Image(systemName: "plus")
+        }
+      }
+    }
+  }
 }
 
 #Preview {
-    SearchResultView(keyword: "")
+  NavigationStack {
+    SearchResultView(selectedTags: Set([1, 2, 3]))
+  }
 }

@@ -35,20 +35,20 @@ struct FeedWriteView: View {
         VStack {
           Text("태그 선택")
 
+          let columns = Array(repeating: GridItem(.flexible()), count: 4)
           let filteredTags = sampleTags.filter { $0.category_id == selectedCategoryId }
 
-          LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+          LazyVGrid(columns: columns, spacing: 12) {
             ForEach(filteredTags) { tag in
-              VStack(spacing: 4) {
-                Text("\(tag.emoji)")
-                  .font(.system(size: 32))
-                Text("\(tag.name)")
+              VStack(spacing: 2) {
+                Text(tag.emoji)
+                  .font(.largeTitle)
+                Text(tag.name)
                   .font(.caption2)
               }
-              .frame(width: 60)
-              .padding(4)
-              .background(Color.gray.opacity(0.2))
-              .cornerRadius(8)
+              .frame(width: 70, height: 70)
+              .background(Color.gray.opacity(0.15))
+              .cornerRadius(10)
             }
           }
           .padding(.horizontal)
