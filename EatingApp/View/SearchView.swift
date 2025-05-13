@@ -53,7 +53,7 @@ struct SearchView: View {
           .buttonStyle(.borderedProminent)
         }
         .navigationDestination(isPresented: $navigateToResult) {
-          SearchResultView(keyword: searchText)
+          SearchResultView(selectedTags: selectedTags)
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -68,6 +68,12 @@ struct SearchView: View {
           ToolbarItem(placement: .principal) {
             Text("태그 검색")
               .font(.headline)
+          }
+
+          ToolbarItemGroup(placement: .navigationBarTrailing) {
+              NavigationLink(destination: SearchResultView(selectedTags: selectedTags)) {
+                  Image(systemName: "plus")
+              }
           }
         }
       }
