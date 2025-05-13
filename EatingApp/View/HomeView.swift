@@ -30,40 +30,17 @@ struct HomeView: View {
                 }
                 ScrollView {
                     VStack(spacing: 0) {
-                        HStack {
-                            Spacer()
-
-                            NavigationLink(destination: StasticsView()) {
-                                Image(systemName: "chart.pie")
-                                    .font(.title)
-                            }
-
-                            NavigationLink(destination: TagManageView()) {
-                                Image(systemName: "tag")
-                                    .font(.title)
-                            }
-
-                            NavigationLink(destination: SearchView()) {
-                                Image(systemName: "magnifyingglass")
-                                    .font(.title)
-                            }
-
-
-                        }
-                        .padding(.horizontal, 40)
-
-
 
                         ForEach(sampleFeeds.sorted(by: { $0.create_date > $1.create_date })) { feed in
-                            VStack(spacing: 2) {
+                            if let category = sampleCategories.first(where: { $0.id == feed.category_id }) {
+                                VStack(spacing: 2) {
 
-                                NavigationLink(destination: FeedWriteView()) {
-                                    Image(systemName: "square.and.pencil")
-                                }
+                                    NavigationLink(destination: FeedWriteView()) {
+                                        Image(systemName: "square.and.pencil")
+                                    }
 
-                                HStack {
-                                    if let category = sampleCategories.first(where: { $0.id == feed.category_id }) {
-                                        Text("\(category.emoji)")
+                                    HStack {
+                                        Text(category.emoji)
                                             .font(.largeTitle)
 
                                         VStack {
@@ -84,13 +61,12 @@ struct HomeView: View {
                                                 .font(.caption)
                                         }
                                     }
-
-                                }
-                                .padding(30)
-                                .background(Color.green.opacity(0.3))
+                                    .padding(30)
+                                    .background(Color.green.opacity(0.3))
 //                                .padding()
+                                }
+                                .padding(10)
                             }
-                            .padding(10)
 
 
                         }
@@ -104,7 +80,7 @@ struct HomeView: View {
                     if showPopup {
                         HStack(spacing: 30) {
                             ForEach(sampleCategories, id: \.id) { category in
-                                NavigationLink(destination: FeedWriteView()) {
+                              NavigationLink(destination: FeedWriteView()) {
                                     VStack(spacing: 4) {
                                         Text(category.emoji).font(.largeTitle)
                                         Text(category.name)
@@ -142,6 +118,19 @@ struct HomeView: View {
                     }
                 }
             }
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: StasticsView()) {
+                        Image(systemName: "chart.pie")
+                    }
+                    NavigationLink(destination: TagManageView()) {
+                        Image(systemName: "tag")
+                    }
+                    NavigationLink(destination: SearchView()) {
+                        Image(systemName: "magnifyingglass")
+                    }
+                }
+            }
         }
 
     }
@@ -150,6 +139,3 @@ struct HomeView: View {
 #Preview {
     HomeView()
 }
-
-
-

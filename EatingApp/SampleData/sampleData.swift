@@ -84,7 +84,15 @@ let sampleTags: [TagModel] = [
   TagModel(id: 16, name: "보리차", emoji: "🍵", category_id: 2, use_yn: "Y"),
   TagModel(id: 17, name: "홍삼", emoji: "🧧", category_id: 3, use_yn: "Y"),
   TagModel(id: 18, name: "비타민D", emoji: "🌞", category_id: 3, use_yn: "Y"),
-  TagModel(id: 19, name: "유산균", emoji: "🦠", category_id: 3, use_yn: "Y")
+  TagModel(id: 19, name: "유산균", emoji: "🦠", category_id: 3, use_yn: "Y"),
+  TagModel(id: 20, name: "생수", emoji: "💧", category_id: 2, use_yn: "Y"),
+  TagModel(id: 21, name: "스프라이트", emoji: "🫧", category_id: 2, use_yn: "Y"),
+  TagModel(id: 22, name: "아메리카노", emoji: "☕️", category_id: 2, use_yn: "Y"),
+  TagModel(id: 23, name: "밀크쉐이크", emoji: "🥤", category_id: 2, use_yn: "Y"),
+  TagModel(id: 24, name: "에너지드링크", emoji: "⚡️", category_id: 2, use_yn: "Y"),
+  TagModel(id: 25, name: "탄산수", emoji: "🥂", category_id: 2, use_yn: "Y"),
+  TagModel(id: 26, name: "칵테일", emoji: "🍸", category_id: 2, use_yn: "Y"),
+  TagModel(id: 27, name: "녹차", emoji: "🍃", category_id: 2, use_yn: "Y"),
+  TagModel(id: 28, name: "딸기우유", emoji: "🥛", category_id: 2, use_yn: "Y"),
+  TagModel(id: 29, name: "식혜", emoji: "🍶", category_id: 2, use_yn: "Y")
 ]
-
-
