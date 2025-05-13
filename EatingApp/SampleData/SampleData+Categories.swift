@@ -9,10 +9,10 @@ import Foundation
 import SwiftData
 
 extension CategoryEntity {
-  static let food = CategoryEntity(name: "음식", emoji: "🥗")
-  static let pill = CategoryEntity(name: "영양제", emoji: "💊")
-  static let drink = CategoryEntity(name: "음료", emoji: "🥤")
-  
+  static let food = CategoryEntity(name: "음식", emoji: "🥗", imageName: "bob")
+  static let pill = CategoryEntity(name: "영양제", emoji: "💊",  imageName: "drug")
+  static let drink = CategoryEntity(name: "음료", emoji: "🥤",  imageName: "drink")
+
   static func insertSampleData(modelContext: ModelContext) {
     modelContext.insert(food)
     modelContext.insert(pill)

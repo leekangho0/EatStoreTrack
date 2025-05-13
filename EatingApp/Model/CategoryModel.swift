@@ -12,21 +12,26 @@ struct CategoryModel: Identifiable {
     let id: Int
     let name: String
     let emoji: String
+  	let imageName: String
 }
 
 @Model
 class CategoryEntity {
   @Attribute(.unique) var name: String
   var emoji: String
-  
+  var imageName: String
+
   @Relationship(inverse: \FeedEntity.category)
   var feeds = [FeedEntity]()
   
   @Relationship(inverse: \TagEntity.category)
   var tags = [TagEntity]()
-  
-  init(name: String, emoji: String) {
+
+
+
+  init(name: String, emoji: String, imageName: String) {
     self.name = name
     self.emoji = emoji
+    self.imageName = imageName
   }
 }

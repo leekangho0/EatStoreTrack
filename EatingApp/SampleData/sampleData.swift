@@ -12,14 +12,17 @@ let sampleCategories: [CategoryModel] = [
         id: 1,
         name: "먹을거",
         emoji: "🍽️",
+        imageName: "bob"
     ),CategoryModel(
         id: 2,
         name: "마실거",
         emoji: "🍹",
+        imageName: "drink"
     ),CategoryModel(
         id: 3,
         name: "영양제",
         emoji: "💊",
+        imageName: "drug"
     ),
 
 ]
