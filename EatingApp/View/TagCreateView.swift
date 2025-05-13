@@ -69,11 +69,11 @@ struct TagCreateView: View {
             case 1:
               return foodEmojis
             case 2:
-              return drinkEmojis
+              return Array(Set(drinkEmojis))
             case 3:
-              return healthEmojis
+              return Array(Set(healthEmojis))
             default:
-              return foodEmojis + drinkEmojis + healthEmojis
+              return Array(Set(foodEmojis + drinkEmojis + healthEmojis))
             }
           }()
 
