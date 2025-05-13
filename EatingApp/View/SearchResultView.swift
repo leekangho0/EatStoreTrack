@@ -12,6 +12,7 @@ struct SearchResultView: View {
 
     var body: some View {
         VStack {
+          Text("HomeView 완성되면 복붙합시다 이 페이지는")
             Text("검색 결과 for: \(keyword)")
 
         }
