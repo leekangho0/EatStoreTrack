@@ -169,6 +169,7 @@ struct FeedWriteView: View {
 
 extension FeedWriteView {
   
+  // data에 저장되지않는 문제 있음
   func saveFeed() {
     guard let selectedTagEntitys = selectedTagEntitys else { return }
     guard let selectedImage = selectedImage, let imageData = selectedImage.jpegData(compressionQuality: 0.8) else { return }
@@ -178,14 +179,17 @@ extension FeedWriteView {
       content: self.content,
       category: self.selectedCategoryEntity,
       tags: selectedTagEntitys,
-      image: imageData
+      image: imageData,
     )
     
     modelContext.insert(newFeed)
     
     do {
+      print("saved before")
       try modelContext.save()
+      print("saved after")
       
+      // debug
       let savedFeeds = try modelContext.fetch(FetchDescriptor<FeedEntity>())
       print("저장된 Feed 개수: \(savedFeeds.count)")
     } catch {
