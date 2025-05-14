@@ -37,10 +37,14 @@ struct TagManageView: View {
       .navigationBarTitleDisplayMode(.large)
       .sheet(isPresented: $showNewTag, content: {
         TagCreateView(tag: nil)
+          .presentationDragIndicator(.visible)
+          .presentationDetents([.large, .large])
           .presentationBackground(Color.pBack1)
       })
       .sheet(item: $selectedTag, content: { tag in
         TagCreateView(tag: tag)
+          .presentationDragIndicator(.visible)
+          .presentationDetents([.large, .large])
           .presentationBackground(Color.pBack1)
       })
       .toolbar {

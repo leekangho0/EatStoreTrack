@@ -27,10 +27,9 @@ struct TagCreateView: View {
 
   var body: some View {
     ZStack {
-      Color.pBack1
-        .ignoresSafeArea()
+      	Color.pBack1
+       		 .ignoresSafeArea()
 
-      NavigationStack {
         VStack {
           Picker("카테고리 선택", selection: $selectedCategory) {
             ForEach(Category.allCases) { category in
@@ -110,7 +109,6 @@ struct TagCreateView: View {
           }
         }
       }
-    }
   }
 }
 
