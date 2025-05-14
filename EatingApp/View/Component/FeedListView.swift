@@ -43,7 +43,7 @@ struct FeedContentView: View {
   
   var body: some View {
     HStack {
-      Text(item.category.emoji)
+      Category(rawValue: item.category)?.icon
       Text(item.content)
     }
     HStack {

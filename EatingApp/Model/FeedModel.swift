@@ -22,19 +22,22 @@ struct FeedModel: Identifiable {
 class FeedEntity {
   @Attribute(.unique) var id: String
   var content: String
-  var category: CategoryEntity
+  var category: Category.RawValue
+  
   var useYN: Bool
   var createdDate: Date
   var updatedDate: Date
+  
+  @Relationship(inverse: \TagEntity.feeds)
   var tags: [TagEntity]
   
   @Attribute(.externalStorage)
   var image: Data?
   
-  init(content: String, category: CategoryEntity, tags: [TagEntity]) {
+  init(content: String, category: Category, tags: [TagEntity]) {
     self.content = content
     self.id = UUID().uuidString
-    self.category = category
+    self.category = category.rawValue
     self.useYN = true
     self.createdDate = Date()
     self.updatedDate = Date()

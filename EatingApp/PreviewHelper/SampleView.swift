@@ -19,8 +19,7 @@ struct SampleFeedsView: View {
       ForEach(feeds) { feed in
         HStack {
           VStack {
-            Text(feed.category.emoji)
-              .font(.largeTitle)
+            
           }
           
           VStack(alignment: .leading) {
