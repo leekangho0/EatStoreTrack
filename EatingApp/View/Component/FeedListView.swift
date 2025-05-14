@@ -14,16 +14,27 @@ struct FeedListView: View {
   @Query(sort: \FeedEntity.createdDate)
   var items: [FeedEntity]
   @State var showDelete = false
+  @State private var selectedFeed: FeedEntity?
   
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 20) {
         ForEach(items) { item in
-          FeedContentView(item: item, deleteAction: onDelete)
+          FeedItem(item: item) {
+            selectedFeed = item
+          } onDelete: {
+            withAnimation {
+              modelContext.delete(item)
+            }
+          }
         }
       } //: VStack
       .padding(.horizontal, 20)
-    } //: ScrollView
+    }
+    .navigationDestination(item: $selectedFeed) { item in
+      FeedWriteView(feed: item)
+    }
+    //: ScrollView
   } //: body
 }
 
