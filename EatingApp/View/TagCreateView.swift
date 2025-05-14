@@ -26,80 +26,87 @@ struct TagCreateView: View {
   let rows = Array(repeating: GridItem(.flexible()), count: 5)
 
   var body: some View {
-    NavigationStack {
-      VStack {
-        Picker("카테고리 선택", selection: $selectedCategory) {
-          ForEach(Category.allCases) { category in
-            Text(category.rawValue)
-              .tag(category)
-          }
-        }
-        .pickerStyle(.palette)
-        .padding()
-        
-        Button {
-          showEmojiPicker = true
-        } label: {
-          Text("\(tagEmoji)")
-            .font(.system(size: 200))
-            .padding()
-            .background(Color.gray.opacity(0.3))
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-        }
-        
+    ZStack {
+      Color.pBack1
+        .ignoresSafeArea()
+
+      NavigationStack {
         VStack {
-          Text("태그 이름")
-          TextField("태그 이름", text: $tagName)
-            .padding(10)
-            .background(
-              RoundedRectangle(cornerRadius: 8)
-                .fill(Color.gray.opacity(0.3))
-            )
-        }
-        .padding(40)
-        
-        Button(action: addTag) {
-          Text("저장하기")
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .clipShape(Capsule())
-            .padding(.horizontal)
-        }
-      }
-      .padding(.horizontal, 60)
-      .onAppear(perform: {
-        if let tag {
-          tagName = tag.name
-          tagEmoji = tag.emoji
-          selectedCategory = Category(rawValue: tag.category) ?? .drink
-        }
-      })
-      .sheet(isPresented: $showEmojiPicker) {
-        ScrollView {
-          LazyVGrid(columns: rows) {
-            ForEach(emoojis(selectedCategory.rawValue), id: \.self) { tag in
-              Button {
-                tagEmoji = tag
-                showEmojiPicker = false
-              } label: {
-                Text(tag)
-                  .font(.largeTitle)
-                  .padding()
-              }
+          Picker("카테고리 선택", selection: $selectedCategory) {
+            ForEach(Category.allCases) { category in
+              Text(category.rawValue)
+                .tag(category)
             }
           }
+          .pickerStyle(.palette)
           .padding()
+
+          Button {
+            showEmojiPicker = true
+          } label: {
+            Text("\(tagEmoji)")
+              .font(.system(size: 200))
+              .padding()
+              .background(Color.pWhiteBlack)
+              .clipShape(RoundedRectangle(cornerRadius: 16))
+          }
+          .compositingGroup()
+          .shadow(color: Color.pShadow.opacity(0.2), radius: 4, y:2)
+
+          VStack {
+            Text("태그 이름")
+            TextField("키위소스듬뿍김밥", text: $tagName)
+              .padding(10)
+              .background(
+                RoundedRectangle(cornerRadius: 8)
+                  .fill(Color.pWhiteBlack.opacity(0.7))
+              )
+          }
+          .padding(40)
+
+          Button(action: addTag) {
+            Text("저장하기")
+              .padding()
+              .frame(maxWidth: .infinity)
+              .background(Color.accentColor)
+              .foregroundColor(.white)
+              .clipShape(Capsule())
+              .padding(.horizontal)
+          }
         }
-        .presentationDetents([.fraction(0.5), .fraction(0.8)])
-      }
-      .navigationTitle(navigationTitle)
-      .navigationBarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .navigationBarLeading) {
-          Button("Cancel", role: .cancel) {
-            dismiss()
+        .padding(.horizontal, 60)
+        .onAppear(perform: {
+          if let tag {
+            tagName = tag.name
+            tagEmoji = tag.emoji
+            selectedCategory = Category(rawValue: tag.category) ?? .drink
+          }
+        })
+        .sheet(isPresented: $showEmojiPicker) {
+          ScrollView {
+            LazyVGrid(columns: rows) {
+              ForEach(emoojis(selectedCategory.rawValue), id: \.self) { tag in
+                Button {
+                  tagEmoji = tag
+                  showEmojiPicker = false
+                } label: {
+                  Text(tag)
+                    .font(.largeTitle)
+                    .padding()
+                }
+              }
+            }
+            .padding()
+          }
+          .presentationDetents([.fraction(0.5), .fraction(0.8)])
+        }
+        .navigationTitle(navigationTitle)
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+          ToolbarItem(placement: .navigationBarLeading) {
+            Button("취소", role: .cancel) {
+              dismiss()
+            }
           }
         }
       }

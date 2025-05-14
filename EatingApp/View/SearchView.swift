@@ -13,13 +13,13 @@ struct SearchView: View {
   @State private var navigateToResult = false
   @State var selectedTags: Set<Int> = []
 
-    var body: some View {
+  var body: some View {
+    ZStack {
+      Color.pBack1
+        .ignoresSafeArea()
+
       ScrollView {
         VStack {
-          // 아 맞다 텍스트검색 빼기로했지
-          //            TextField("검색어를 입력하세요", text: $searchText)
-          //                .textFieldStyle(RoundedBorderTextFieldStyle())
-          //                .padding(.horizontal)
 
           let columns = Array(repeating: GridItem(.flexible()), count: 4)
 
@@ -40,38 +40,40 @@ struct SearchView: View {
                     .font(.caption2)
                 }
                 .frame(width: 70, height: 70)
-                .background(selectedTags.contains(tag.id) ? Color.yellow : Color.gray.opacity(0.15))
+                .foregroundStyle(selectedTags.contains(tag.id) ? Color.pWhiteBlack : Color.accentColor)
+                .background(selectedTags.contains(tag.id) ? Color.pAccent2 : Color.pWhiteBlack)
                 .cornerRadius(10)
+                .compositingGroup()
+                .shadow(color: Color.pShadow.opacity(0.2), radius: 4, y:2)
               }
             }
           }
           .padding(.horizontal)
 
-          Button("검색") {
-            navigateToResult = true
-          }
-          .buttonStyle(.borderedProminent)
+
         }
         .navigationDestination(isPresented: $navigateToResult) {
           SearchResultView(selectedTags: selectedTags)
         }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-          ToolbarItem(placement: .navigationBarLeading) {
-            Button {
-              dismiss()
-            } label: {
-              Image(systemName: "chevron.left")
-            }
-          }
+      }
 
-          ToolbarItem(placement: .principal) {
-            Text("태그 검색")
-              .font(.headline)
-          }
+      VStack {
+        Spacer()
+        Button {
+          navigateToResult = true
+        } label: {
+          Image(systemName: "magnifyingglass")
+            .font(.largeTitle)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 4)
         }
+        .padding(20)
+        .buttonStyle(.borderedProminent)
       }
     }
+    .navigationTitle("검색")
+    .navigationBarTitleDisplayMode(.large)
+  }
 }
 
 #Preview {
