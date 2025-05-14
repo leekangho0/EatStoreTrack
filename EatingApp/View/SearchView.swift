@@ -18,45 +18,47 @@ struct SearchView: View {
       Color.pBack1
         .ignoresSafeArea()
 
-      ScrollView {
-        VStack {
+      VStack {
+        Spacer().frame(minHeight: 20, maxHeight: 30)
+        ScrollView {
+          VStack {
 
-          let columns = Array(repeating: GridItem(.flexible()), count: 4)
+            let columns = Array(repeating: GridItem(.flexible()), count: 4)
 
-          LazyVGrid(columns: columns, spacing: 12) {
-            ForEach(sampleTags) { tag in
-              Button(action: {
-                if selectedTags.contains(tag.id) {
-                  selectedTags.remove(tag.id)
-                } else {
-                  selectedTags.insert(tag.id)
+            LazyVGrid(columns: columns, spacing: 12) {
+              ForEach(sampleTags) { tag in
+                Button(action: {
+                  if selectedTags.contains(tag.id) {
+                    selectedTags.remove(tag.id)
+                  } else {
+                    selectedTags.insert(tag.id)
+                  }
+                }) {
+                  VStack(spacing: 2) {
+                    Text(tag.emoji)
+                      .font(.largeTitle)
+
+                    Text(tag.name)
+                      .font(.caption2)
+                  }
+                  .frame(width: 70, height: 70)
+                  .foregroundStyle(selectedTags.contains(tag.id) ? Color.pWhiteBlack : Color.accentColor)
+                  .background(selectedTags.contains(tag.id) ? Color.pAccent2 : Color.pWhiteBlack)
+                  .cornerRadius(10)
+                  .compositingGroup()
+                  .shadow(color: Color.pShadow.opacity(0.2), radius: 4, y:2)
                 }
-              }) {
-                VStack(spacing: 2) {
-                  Text(tag.emoji)
-                    .font(.largeTitle)
-
-                  Text(tag.name)
-                    .font(.caption2)
-                }
-                .frame(width: 70, height: 70)
-                .foregroundStyle(selectedTags.contains(tag.id) ? Color.pWhiteBlack : Color.accentColor)
-                .background(selectedTags.contains(tag.id) ? Color.pAccent2 : Color.pWhiteBlack)
-                .cornerRadius(10)
-                .compositingGroup()
-                .shadow(color: Color.pShadow.opacity(0.2), radius: 4, y:2)
               }
             }
+            .padding(.horizontal)
+
+
           }
-          .padding(.horizontal)
-
-
-        }
-        .navigationDestination(isPresented: $navigateToResult) {
-          SearchResultView(selectedTags: selectedTags)
+          .navigationDestination(isPresented: $navigateToResult) {
+            SearchResultView(selectedTags: selectedTags)
+          }
         }
       }
-
       VStack {
         Spacer()
         Button {
