@@ -16,12 +16,15 @@ struct FeedListView: View {
   @State var showDelete = false
   
   var body: some View {
-    List {
-      ForEach(items) { item in
-        FeedContentView(item: item, deleteAction: onDelete)
-      }
-    }
-  }
+    ScrollView {
+      VStack(alignment: .leading, spacing: 20) {
+        ForEach(items) { item in
+          FeedContentView(item: item, deleteAction: onDelete)
+        }
+      } //: VStack
+      .padding(.horizontal, 20)
+    } //: ScrollView
+  } //: body
 }
 
 extension FeedListView {
@@ -42,20 +45,29 @@ struct FeedContentView: View {
   let deleteAction: (FeedEntity) -> ()
   
   var body: some View {
-    HStack {
-      Category(rawValue: item.category)?.icon
-      Text(item.content)
-    }
-    HStack {
-      Spacer()
-        .frame(maxWidth: .infinity)
+    ZStack {
+      Rectangle()
+        .fill(Color("pYellow"))
+        .frame(height: 300)
       
-      Button {
-        deleteAction(item)
-      } label: {
-        Image(systemName: "trash")
+      HStack {
+        Category(rawValue: item.category)?.icon
+        Text(item.content)
       }
-      .background(.yellow)
-    }
-  }
+      
+      HStack {
+        Spacer()
+          .frame(maxWidth: .infinity)
+        
+        Button {
+          deleteAction(item)
+        } label: {
+          Image(systemName: "trash")
+            .foregroundColor(.primary)
+        }
+        .background(Color("pYellow"))
+      }
+    } //: ZStack
+  } //: body
+  
 }
