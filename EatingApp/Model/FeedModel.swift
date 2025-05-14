@@ -28,6 +28,9 @@ class FeedEntity {
   var updatedDate: Date
   var tags: [TagEntity]
   
+  @Attribute(.externalStorage)
+  var image: Data?
+  
   init(content: String, category: CategoryEntity, tags: [TagEntity]) {
     self.content = content
     self.id = UUID().uuidString
@@ -36,5 +39,6 @@ class FeedEntity {
     self.createdDate = Date()
     self.updatedDate = Date()
     self.tags = tags
+    self.image = nil
   }
 }
