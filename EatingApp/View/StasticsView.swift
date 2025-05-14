@@ -14,6 +14,10 @@ struct StasticsView: View {
   @State var selectedCategory: Int = 0
 
   var body: some View {
+    ZStack {
+      Color.pBack1
+        .ignoresSafeArea()
+
     VStack {
 
       VStack(spacing: 20) {
@@ -100,20 +104,30 @@ struct StasticsView: View {
 
           ForEach(sampleTopRanks, id: \.rank) { rank in
             HStack {
-              Text("\(rank.rank). \(rank.emoji) \(rank.count)회")
+              Text("\(rank.rank)위 ")
                 .font(.largeTitle)
+                .foregroundStyle(Color.white)
 
               Spacer()
+              
+              Text("\(rank.emoji) \(rank.count)회")
+                .font(.title)
+                .foregroundStyle(Color.pBack1)
+
+
             }
             .padding(10)
+            .padding(.horizontal, 20)
             .frame(maxWidth: .infinity)
             .background {
-              Color.yellow.opacity(0.2)
-                .clipShape(Capsule())
+              RoundedRectangle(cornerRadius: 18)
+                .fill(Color.pAccent2.opacity(0.9))
+                .compositingGroup()
+                .shadow(color: Color.pShadow.opacity(0.2), radius: 2, y:1)
             }
           }
         }
-        .padding(20)
+        .padding(10)
 
 
 
@@ -121,34 +135,19 @@ struct StasticsView: View {
 
 
       }
+      .padding()
       .frame(maxWidth: .infinity, minHeight: 500)
       .background(
         RoundedRectangle(cornerRadius: 20)
-          .fill(Color.pBack1)
+          .fill(Color.pWhiteBlack)
       )
-      .overlay {
-        RoundedRectangle(cornerRadius: 20)
-          .stroke(Color.pText, lineWidth: 3)
-      }
-
+      .compositingGroup()
+      .shadow(color: Color.pShadow.opacity(0.2), radius: 4, y:2)
 
     }
     .padding(20)
-    .navigationBarBackButtonHidden(true)
-    .toolbar {
-      ToolbarItem(placement: .topBarLeading) {
-        Button {
-          dismiss()
-        } label: {
-          Image(systemName: "chevron.left")
-        }
-      }
-
-      ToolbarItem(placement: .principal) {
-        Text("통계")
-          .font(.headline)
-      }
-
+    .navigationTitle("통계")
+    .navigationBarTitleDisplayMode(.large)
     }
   }
 }
