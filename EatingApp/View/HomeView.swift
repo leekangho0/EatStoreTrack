@@ -19,15 +19,27 @@ struct HomeView: View {
   let menuYears = Array(2020...2030)
   let menuMonths = Array(1...12)
   
-  
-  init() {
+  var filteredFeeds: [FeedEntity] {
+    let calendar = Calendar.current
+    guard let startDate = calendar.date(from: DateComponents(year: selectedYear,
+                                                             month: selectedMonth,
+                                                             day: 1)),
+          let endDate = calendar.date(byAdding: .month,
+                                      value: 1,
+                                      to: startDate) else {
+      return []
+    }
+    
+    return feeds.filter {
+      $0.createdDate >= startDate && $0.createdDate < endDate
+    }
   }
   
   var body: some View {
     NavigationStack {
       ZStack {
         ZStack {
-          FeedListView()
+          FeedListView(feeds: filteredFeeds)
             .padding(.top, 40)
           
           VStack {
@@ -69,13 +81,12 @@ struct HomeView: View {
           }
         }
       }
-//      .navigationTitle("Home")
       .navigationDestination(for: Category.self) { category in
         FeedWriteView(category: category)
       }
       .toolbar {
         ToolbarItemGroup(placement: .navigationBarLeading) {
-          VStack(alignment: .leading, spacing: -5) {
+          HStack(spacing: 0) {
             Menu {
               ForEach(menuYears, id: \.self) { year in
                 Button("\(String(year)) 년") {

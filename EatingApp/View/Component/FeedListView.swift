@@ -9,16 +9,15 @@ import SwiftUI
 import SwiftData
 
 struct FeedListView: View {
-  @Environment(\.modelContext) var modelContext
   
-  @Query(sort: \FeedEntity.createdDate)
-  var items: [FeedEntity]
+  @Environment(\.modelContext) var modelContext
   @State var showDelete = false
+  var feeds: [FeedEntity]
   
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 20) {
-        ForEach(items) { item in
+        ForEach(feeds) { item in
           FeedContentView(item: item, deleteAction: onDelete)
         }
       } //: VStack
@@ -35,10 +34,10 @@ extension FeedListView {
 
 #Preview {
   ModelContainerPreview(ModelContainer.samples) {
-    FeedListView()
+    FeedListView(feeds: [FeedEntity(content: "예시 회고", category: .food, tags: [TagEntity(name: "고기", emoji: "🐷", category: .food), TagEntity(name: "고기", emoji: "🐷", category: .food)]),
+                         FeedEntity(content: "예시 회고", category: .food, tags: [TagEntity(name: "고기", emoji: "🐷", category: .food)])])
   }
 }
-
 
 struct FeedContentView: View {
   let item: FeedEntity
@@ -48,25 +47,62 @@ struct FeedContentView: View {
     ZStack {
       Rectangle()
         .fill(Color("pYellow"))
-        .frame(height: 300)
+        .frame(height: 220)
       
-      HStack {
-        Category(rawValue: item.category)?.icon
-        Text(item.content)
-      }
-      
-      HStack {
-        Spacer()
-          .frame(maxWidth: .infinity)
-        
-        Button {
-          deleteAction(item)
-        } label: {
-          Image(systemName: "trash")
-            .foregroundColor(.primary)
+      HStack(spacing: 30) {
+        VStack {
+          Text(item.createdDate.weekdayString())
+          
+          Text(item.createdDate.toDateString())
+            .font(.system(size: 45, weight: .bold))
         }
-        .background(Color("pYellow"))
-      }
+        
+        Rectangle()
+          .fill(.primary)
+          .frame(width: 1, height: 190)
+        
+        VStack(alignment: .leading, spacing: 5) {
+          Text(item.content)
+          
+          HStack {
+            ForEach(item.tags) { tag in
+              Text(tag.emoji)
+            }
+          }
+          .padding(.bottom, 20)
+          
+          Image("feedSampleImage")
+            .resizable()
+            .scaledToFill()
+            .frame(width: 100, height: 100)
+        }
+        
+        VStack(alignment: .trailing) {
+          Spacer()
+          
+          if let categoryItem = Category(rawValue: item.category) {
+            categoryItem.icon
+              .resizable()
+              .scaledToFit()
+              .frame(width: 70, height: 70)
+          }
+          
+          HStack(spacing: 0) {
+            Text(item.createdDate.formattedTime12Hour())
+              .font(.system(size: 15, weight: .bold))
+              .frame(width: 70)
+            
+            Button {
+              deleteAction(item)
+            } label: {
+              Image(systemName: "trash")
+                .foregroundColor(.primary)
+            }
+            .background(Color("pYellow"))
+          } //: HStack
+        } //: VStack
+        .padding([.bottom], 20)
+      } //: HStack
     } //: ZStack
   } //: body
   
