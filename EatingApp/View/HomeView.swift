@@ -21,10 +21,6 @@ struct HomeView: View {
   
   
   init() {
-    
-//    let predicate = #Predicate<FeedEntity> { feed in
-//      feed.createdDate.year == $selectedYear.year
-//    }
   }
   
   var body: some View {
@@ -75,9 +71,7 @@ struct HomeView: View {
       }
 //      .navigationTitle("Home")
       .navigationDestination(for: Category.self) { category in
-        VStack {
-          Text(category.rawValue)
-        }
+        FeedWriteView(category: category)
       }
       .toolbar {
         ToolbarItemGroup(placement: .navigationBarLeading) {

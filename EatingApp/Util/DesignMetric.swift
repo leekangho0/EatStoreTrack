@@ -8,6 +8,6 @@
 import Foundation
 
 enum Metric {
-  static let cornerRaidus: CGFloat = 12
+  static let cornerRadius: CGFloat = 12
   static let customPadding: CGFloat = 10
 }

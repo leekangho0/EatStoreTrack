@@ -11,26 +11,24 @@ import PhotosUI
 
 struct FeedWriteView: View {
   private static let placeholderText = "기록해주세요. 10자 이내"
+  
   @Environment(\.dismiss) var dismiss
   @Environment(\.modelContext) private var modelContext
   
   @Query var filteredTags: [TagEntity]
   
+  let feed: FeedEntity?
+  
   @State private var content: String = ""
-  @State private var showImagePicker = false
   @State private var selectedImage: PhotosPickerItem?
   @State private var selectedImageData: Data?
-  @State private var selectedTagEntitys: [TagEntity]?
   @State private var selectedTagIDs: Set<TagEntity> = []
-  
-  private enum Metric {
-    static let cornerRadius: CGFloat = 12
-  }
   
   let category: Category
   
   init(category: Category) {
     self.category = category
+    self.feed = nil
     let categoryName: String = category.rawValue
     let predicate = #Predicate<TagEntity> { tag in
       tag.category == categoryName
@@ -39,10 +37,16 @@ struct FeedWriteView: View {
     _filteredTags = Query(filter: predicate)
   }
   
+  init(feed: FeedEntity) {
+    self.feed = feed
+    self.category = Category(rawValue: feed.category) ?? .drink
+  }
+  
   var body: some View {
     ScrollView {
       VStack(alignment: .leading) {
         Text("카테고리")
+        
         HStack(spacing: 0) {
           category.icon
             .resizable()
@@ -55,48 +59,73 @@ struct FeedWriteView: View {
         }
         .padding()
         .frame(maxWidth: .infinity)
-        .background(.pBack1)
+        .background(.pYellow)
         .clipShape(RoundedRectangle(cornerRadius: Metric.cornerRadius))
         
         Text("태그")
+        
         TagGridLayout(tags: filteredTags, selectedTags: $selectedTagIDs)
-          .background(.pBack1)
+          .background(.pYellow)
           .clipShape(RoundedRectangle(cornerRadius: Metric.cornerRadius))
         
-        Text("회고 작성 20자")
+        Text("끄적끄적")
         
-        TextField("", text: $content, prompt: Text("지금을 기록해주세요. (10자 이내)"), axis: .vertical)
+        TextField("", text: $content, prompt: Text("지금을 기록해주세요. (10자 이내)").foregroundStyle(.pText), axis: .vertical)
           .padding()
           .background {
-            Color.pBack1
+            Color.pYellow
           }
           .onChange(of: content) { oldValue, newValue in
             content = String(content.prefix(20))
           }
           .clipShape(RoundedRectangle(cornerRadius: Metric.cornerRadius))
         
-          Text("사진")
-          
-          PhotosPicker(selection: $selectedImage, matching: .images, photoLibrary: .shared()) {
-            Group {
-              if let selectedImageData, let image = UIImage(data: selectedImageData) {
-                Image(uiImage: image)
-                  .resizable()
-                  .scaledToFit()
-                  .clipShape(RoundedRectangle(cornerRadius: Metric.cornerRadius))
-                  .padding(20)
-              } else {
-                Image(systemName: "photo")
-                  .resizable()
-                  .scaledToFit()
-                  .frame(width: 100, height: 100)
-                  .tint(.primary)
-              }
+        Text("사진")
+        
+        PhotosPicker(selection: $selectedImage, matching: .images, photoLibrary: .shared()) {
+          Group {
+            if let selectedImageData, let image = UIImage(data: selectedImageData) {
+              Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .clipShape(RoundedRectangle(cornerRadius: Metric.cornerRadius))
+                .padding(20)
+            } else {
+              Image(systemName: "photo")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 100, height: 100)
+                .tint(.primary)
             }
           }
-          .frame(maxWidth: .infinity, minHeight: 200)
-          .background(Color.pBack1)
-          .clipShape(RoundedRectangle(cornerRadius: Metric.cornerRadius))
+        }
+        .frame(maxWidth: .infinity, minHeight: 200)
+        .background(Color.pYellow)
+        .overlay {
+          if selectedImageData != nil {
+            VStack(alignment: .trailing) {
+              HStack {
+                Spacer()
+                Button {
+                  selectedImage = nil
+                  selectedImageData = nil
+                } label: {
+                  Image(systemName: "x.circle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(.red)
+                    .background(.white)
+                    .clipShape(.circle)
+                    .frame(width: 30, height: 30)
+                    .padding()
+                }
+              }
+              
+              Spacer()
+            }
+          }
+        }
+        .clipShape(RoundedRectangle(cornerRadius: Metric.cornerRadius))
         
         Button {
           saveFeed()
@@ -104,63 +133,77 @@ struct FeedWriteView: View {
           Text("저장")
             .font(.title3)
             .bold()
-            .foregroundStyle(.black)
+            .foregroundStyle(Color.pWhiteBlack)
             .padding()
             .frame(maxWidth: .infinity)
-            .background(selectedTagIDs.isEmpty ? .secondary : Color.pYellow)
+            .background(selectedTagIDs.isEmpty ? .pShadow : .accent)
             .clipShape(RoundedRectangle(cornerRadius: Metric.cornerRadius))
         }
         .padding(.vertical)
         .disabled(selectedTagIDs.isEmpty)
       }
+      .font(.headline)
+      .fontWeight(.bold)
+      .foregroundStyle(Color.pText)
     }
     .scrollIndicators(.hidden)
-    .padding()
-    .navigationBarBackButtonHidden(true)
-    .navigationTitle("새 피드 작성")
+    .navigationTitle("Feed")
+    .navigationBarTitleDisplayMode(.inline)
+    .toolbar {
+      ToolbarItem {
+        Button("저장") {
+          saveFeed()
+        }
+        .disabled(selectedTagIDs.isEmpty)
+      }
+    }
+    .padding(30)
     .task(id: selectedImage) {
       if let data = try? await selectedImage?.loadTransferable(type: Data.self) {
         selectedImageData = data
       }
     }
+    .onAppear {
+      if let feed {
+        self.content = feed.content
+        self.selectedImageData = feed.image
+        self.selectedTagIDs = Set(feed.tags)
+      }
+    }
+    .background(Color.pBack1)
+    .ignoresSafeArea(edges: .bottom)
   }
 }
 
 extension FeedWriteView {
   
-  // data에 저장되지않는 문제 있음
   func saveFeed() {
-    guard let selectedTagEntitys else { return }
-    guard let selectedImageData else { return }
+    guard !selectedTagIDs.isEmpty else { return }
     
-    let newFeed = FeedEntity(
-      content: self.content,
-      category: self.category,
-      tags: selectedTagEntitys,
-      image: selectedImageData,
-    )
+    if let feed {
+      feed.content = content
+      feed.updatedDate = .now
+      feed.image = selectedImageData
+      feed.tags = Array(selectedTagIDs)
+    } else {
+      let newFeed = FeedEntity(
+        content: self.content,
+        category: self.category,
+        tags: Array(selectedTagIDs),
+        image: selectedImageData
+      )
+      modelContext.insert(newFeed)
+    }
     
-    modelContext.insert(newFeed)
-    //
-    //    do {
-    //      print("saved before")
-    //      try modelContext.save()
-    //      print("saved after")
-    //
-    //      // debug
-    //      let savedFeeds = try modelContext.fetch(FetchDescriptor<FeedEntity>())
-    //      print("저장된 Feed 개수: \(savedFeeds.count)")
-    //    } catch {
-    //      print("\(error): saveFeed에서 발생한 에러")
-    //    }
+    dismiss()
   }
-  
 }
 
 #Preview {
   NavigationStack {
-    FeedWriteView(category: .food)
-      .modelContainer(try! ModelContainer.samples())
+    ModelContainerPreview(ModelContainer.samples) {
+      FeedWriteView(category: .food)
+    }
   }
 }
 
@@ -201,10 +244,10 @@ struct SelectableTagItem: View {
           .font(.largeTitle)
         Text(tag.name)
           .font(.caption2)
-          .foregroundStyle(.black)
+          .foregroundStyle(isSelected ? .white : .black)
       }
       .frame(width: 70, height: 70)
-      .background(isSelected ? Color.gray.opacity(0.15) : Color.clear)
+      .background(isSelected ? Color.pText : Color.gray.opacity(0.15))
       .cornerRadius(10)
     }
   }
