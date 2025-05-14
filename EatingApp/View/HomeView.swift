@@ -11,8 +11,6 @@ import SwiftData
 struct HomeView: View {
   
   @State var showPopup = false
-  @Query var categories: [CategoryEntity]
-  @Environment(\.modelContext) private var modelContext
   
   var body: some View {
     NavigationStack {
@@ -48,15 +46,17 @@ struct HomeView: View {
         if showPopup {
           VStack {
             Spacer()
-            CategoryPopUpView(categories: categories)
+            CategoryPopUpView()
               .padding(.bottom, 60)
           }
         }
       }
       .navigationTitle("Home")
-      .navigationDestination(for: CategoryEntity.self, destination: { category in
-        FeedWriteView(selectedCategoryEntity: category)
-      })
+      .navigationDestination(for: Category.self) { category in
+        VStack {
+          Text(category.rawValue)
+        }
+      }
       .toolbar {
         ToolbarItemGroup(placement: .navigationBarTrailing) {
           NavigationLink(destination: StasticsView()) {
@@ -82,17 +82,13 @@ struct HomeView: View {
 }
 
 fileprivate struct CategoryPopUpView: View {
-  let categories: [CategoryEntity]
   
   var body: some View {
     HStack(spacing: 30) {
-      ForEach(categories) { category in
+      ForEach(Category.allCases) { category in
         NavigationLink(value: category) {
           VStack {
-            Text(category.emoji)
-              .font(.largeTitle)
-            
-            Text(category.name)
+            category.icon
           }
         }
       }

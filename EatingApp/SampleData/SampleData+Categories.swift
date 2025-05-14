@@ -8,18 +8,14 @@
 import Foundation
 import SwiftData
 
-extension CategoryEntity {
-  static let food = CategoryEntity(name: "음식", emoji: "🥗", imageName: "bob")
-  static let pill = CategoryEntity(name: "영양제", emoji: "💊",  imageName: "drug")
-  static let drink = CategoryEntity(name: "음료", emoji: "🥤",  imageName: "drink")
-
+extension FeedEntity {
   static func insertSampleData(modelContext: ModelContext) {
-    modelContext.insert(food)
-    modelContext.insert(pill)
-    modelContext.insert(drink)
+    let tagEntity: [TagEntity] = [.coffee, .dumbling, .multiVitamin, .noodle,
+     .ramen, .ramen, .sushi, .tea, .chicken]
     
-    let tagsEntities: [TagEntity] = [.coffee, .dumbling, .multiVitamin, .noodle,
-      .ramen, .ramen, .sushi, .tea, .chicken]
+      tagEntity.forEach { tag in
+       modelContext.insert(tag)
+      }
     
     let feedEntities: [FeedEntity] = [.americano, .chicken, .multiVitamin,
       .noodle, .ramen, .tea, .sushiAndDumbling]

@@ -11,32 +11,31 @@ import SwiftData
 struct TagManageView: View {
   @Environment(\.dismiss) var dismiss
   // TODO: defaultValue 없애기
-  let categories: [CategoryEntity] = [.food, .drink, .pill]
-  @State private var selectedCategory: String = "모두"
-  
-  var pickerItems: [(emoji: String, name: String)] {
-    [
-      ("☣️", "모두"),
-    ] + categories.map { ($0.emoji, $0.name) }
-  }
+
+  @State private var selectedCategory: String = "All"
+  @State private var selectedTag: TagEntity?
+  @State private var showNewTag = false
   
   var body: some View {
     VStack {
       Picker("카테고리 선택", selection: $selectedCategory) {
-        ForEach(pickerItems, id: \.name) { category in
-          Text("\(category.emoji) \( category.name)")
-            .tag(category.name)
+        Text("All").tag("All")
+        ForEach(Category.allCases) { category in
+          Text(category.rawValue)
+            .tag(category.rawValue)
         }
       }
       .pickerStyle(.palette)
       .padding()
-      
-      TagGridView(category: selectedCategory)
+      TagGridView(category: selectedCategory, selectedTag: $selectedTag)
     }
     .navigationBarBackButtonHidden(true)
-    .navigationDestination(for: TagEntity.self) { tag in
-      TagCreateView()
-    }
+    .sheet(isPresented: $showNewTag, content: {
+      TagCreateView(tag: nil)
+    })
+    .sheet(item: $selectedTag, content: { tag in
+      TagCreateView(tag: tag)
+    })
     .toolbar {
       ToolbarItem(placement: .topBarLeading) {
         Button {
@@ -52,7 +51,9 @@ struct TagManageView: View {
       }
       
       ToolbarItem(placement: .topBarTrailing) {
-        NavigationLink(destination: TagCreateView()) {
+        Button {
+          showNewTag.toggle()
+        } label: {
           Image(systemName: "plus")
         }
       }
@@ -62,20 +63,25 @@ struct TagManageView: View {
 
 struct TagGridView: View {
   @Query var tags: [TagEntity]
+  @Binding private var selectedTag: TagEntity?
+  
   let columns = Array(repeating: GridItem(.flexible()), count: 4)
   
-  init(category: String) {
+  init(category: String, selectedTag: Binding<TagEntity?>) {
     let predicate = #Predicate<TagEntity> { tag in
-      tag.category.name == category || category == "모두"
+      tag.category == category || category == "All"
     }
     _tags = Query(filter: predicate, sort: [SortDescriptor(\TagEntity.name)])
+    _selectedTag = selectedTag
   }
   
   var body: some View {
     ScrollView {
       LazyVGrid(columns: columns) {
         ForEach(tags) { tag in
-          NavigationLink(value: tag) {
+          Button {
+            selectedTag = tag
+          } label: {
             VStack(spacing: 0) {
               Text(tag.emoji)
                 .font(.largeTitle)

@@ -22,15 +22,14 @@ class TagEntity {
   var name: String
   var emoji: String
   
-  @Relationship(inverse: \FeedEntity.tags)
   var feeds = [FeedEntity]()
   
-  var category: CategoryEntity
+  var category: Category.RawValue
   
-  init(name: String, emoji: String, category: CategoryEntity) {
+  init(name: String, emoji: String, category: Category) {
     self.name = name
     self.emoji = emoji
     self.id = UUID().uuidString
-    self.category = category
+    self.category = category.rawValue
   }
 }

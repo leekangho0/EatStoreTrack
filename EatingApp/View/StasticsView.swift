@@ -81,11 +81,39 @@ struct StasticsView: View {
 
 
 
-        List {
-          Text("1. ") + Text("🐰") + Text("5회")
-          Text("2. ") + Text("🐔") + Text("3회")
-          Text("3. ") + Text("🐷") + Text("2회")
+        ScrollView {
+
+
+          // TODO: 데이터를 실시간으로 계산해서 가져올건데, 어떤 형식으로 가져올지 고민필요. 일단 이렇게 만듬
+          let sampleTopRanks: [(rank: Int, emoji: String, count: Int)] = [
+            (1, "🐰", 10),
+            (2, "🐶", 9),
+            (3, "🐱", 8),
+            (4, "🦊", 7),
+            (5, "🐻", 6),
+            (6, "🐼", 5),
+            (7, "🐨", 4),
+            (8, "🐯", 3),
+            (9, "🦁", 2),
+            (10, "🐷", 1)
+          ]
+
+          ForEach(sampleTopRanks, id: \.rank) { rank in
+            HStack {
+              Text("\(rank.rank). \(rank.emoji) \(rank.count)회")
+                .font(.largeTitle)
+
+              Spacer()
+            }
+            .padding(10)
+            .frame(maxWidth: .infinity)
+            .background {
+              Color.yellow.opacity(0.2)
+                .clipShape(Capsule())
+            }
+          }
         }
+        .padding(20)
 
 
 

@@ -12,95 +12,96 @@ struct TagCreateView: View {
   @Environment(\.dismiss) var dismiss
   @Environment(\.modelContext) var modelContext
 
-  @State var tagName: String
-  @State var tagEmoji: String
-  @State var showEmojiPicker = false
+  @State private var tagName: String = ""
+  @State private var tagEmoji: String = "🐷"
+  @State private var showEmojiPicker = false
 
-  var categories: [CategoryEntity] = [.drink, .food, .pill]
-  @State var selectedCategory: CategoryEntity
+  @State private var selectedCategory: Category = .drink
+  let tag: TagEntity?
   
-  init(_ tag: TagEntity? = nil) {
-    tagName = tag?.name ?? ""
-    tagEmoji = tag?.emoji ?? "🐷"
-    selectedCategory = tag?.category ?? .drink
+  private var navigationTitle: String {
+    tag == nil ? "태그 작성" : "태그 수정"
   }
   
   let rows = Array(repeating: GridItem(.flexible()), count: 5)
 
   var body: some View {
-    VStack {
-      Picker("카테고리 선택", selection: $selectedCategory) {
-        ForEach(categories) { category in
-          Text("\(category.emoji) \(category.name)")
-            .tag(category)
-        }
-      }
-      .pickerStyle(.palette)
-      .padding()
-
-      Button {
-        showEmojiPicker = true
-      } label: {
-        Text("\(tagEmoji)")
-          .font(.system(size: 200))
-          .padding()
-          .background(Color.gray.opacity(0.3))
-          .clipShape(RoundedRectangle(cornerRadius: 16))
-      }
-
+    NavigationStack {
       VStack {
-        Text("태그 이름")
-        TextField("태그 이름", text: $tagName)
-          .padding(10)
-          .background(
-            RoundedRectangle(cornerRadius: 8)
-              .fill(Color.gray.opacity(0.3))
-          )
-      }
-      .padding(40)
-      
-      Button(action: addTag) {
-        Text("저장하기")
-          .padding()
-          .frame(maxWidth: .infinity)
-          .background(Color.blue)
-          .foregroundColor(.white)
-          .clipShape(Capsule())
-          .padding(.horizontal)
-      }
-    }
-    .padding(.horizontal, 60)
-    .sheet(isPresented: $showEmojiPicker) {
-      ScrollView {
-        LazyVGrid(columns: rows) {
-          ForEach(emoojis(selectedCategory.name), id: \.self) { tag in
-            Button {
-              tagEmoji = tag
-              showEmojiPicker = false
-            } label: {
-              Text(tag)
-                .font(.largeTitle)
-                .padding()
-            }
+        Picker("카테고리 선택", selection: $selectedCategory) {
+          ForEach(Category.allCases) { category in
+            Text(category.rawValue)
+              .tag(category)
           }
         }
+        .pickerStyle(.palette)
         .padding()
-      }
-      .presentationDetents([.fraction(0.5), .fraction(0.8)])
-    }
-    .navigationBarBackButtonHidden(true)
-    .toolbar {
-      ToolbarItem(placement: .navigationBarLeading) {
+        
         Button {
-          dismiss()
+          showEmojiPicker = true
         } label: {
-          Image(systemName: "chevron.left")
+          Text("\(tagEmoji)")
+            .font(.system(size: 200))
+            .padding()
+            .background(Color.gray.opacity(0.3))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+        }
+        
+        VStack {
+          Text("태그 이름")
+          TextField("태그 이름", text: $tagName)
+            .padding(10)
+            .background(
+              RoundedRectangle(cornerRadius: 8)
+                .fill(Color.gray.opacity(0.3))
+            )
+        }
+        .padding(40)
+        
+        Button(action: addTag) {
+          Text("저장하기")
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.blue)
+            .foregroundColor(.white)
+            .clipShape(Capsule())
+            .padding(.horizontal)
         }
       }
-
-      ToolbarItem(placement: .principal) {
-        Text("태그 작성")
-          .font(.headline)
+      .padding(.horizontal, 60)
+      .onAppear(perform: {
+        if let tag {
+          tagName = tag.name
+          tagEmoji = tag.emoji
+          selectedCategory = Category(rawValue: tag.category) ?? .drink
+        }
+      })
+      .sheet(isPresented: $showEmojiPicker) {
+        ScrollView {
+          LazyVGrid(columns: rows) {
+            ForEach(emoojis(selectedCategory.rawValue), id: \.self) { tag in
+              Button {
+                tagEmoji = tag
+                showEmojiPicker = false
+              } label: {
+                Text(tag)
+                  .font(.largeTitle)
+                  .padding()
+              }
+            }
+          }
+          .padding()
+        }
+        .presentationDetents([.fraction(0.5), .fraction(0.8)])
+      }
+      .navigationTitle(navigationTitle)
+      .navigationBarTitleDisplayMode(.inline)
+      .toolbar {
+        ToolbarItem(placement: .navigationBarLeading) {
+          Button("Cancel", role: .cancel) {
+            dismiss()
+          }
+        }
       }
     }
   }
@@ -149,6 +150,6 @@ extension TagCreateView {
 
 #Preview {
   NavigationStack {
-    TagCreateView()
+    TagCreateView(tag: nil)
   }
 }
