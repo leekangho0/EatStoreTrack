@@ -34,12 +34,6 @@ struct SearchResultView: View {
         Text("검색 결과")
           .font(.headline)
       }
-
-      ToolbarItemGroup(placement: .navigationBarTrailing) {
-        NavigationLink(destination: SearchResultView(selectedTags: selectedTags)) {
-          Image(systemName: "plus")
-        }
-      }
     }
   }
 }
