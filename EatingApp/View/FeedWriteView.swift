@@ -8,38 +8,39 @@
 import SwiftUI
 
 struct FeedWriteView: View {
+  
   @Environment(\.dismiss) var dismiss
   @State private var content: String = ""
   @State private var showImagePicker = false
   @State private var selectedImage: UIImage?
+  
+  let selectedCategoryEntity: CategoryEntity
 
-  let selectedCategoryId: Int = 2
-
-
+  init(selectedCategoryEntity: CategoryEntity) {
+    self.selectedCategoryEntity = selectedCategoryEntity
+  }
 
   var body: some View {
 
     ScrollView {
       VStack(spacing: 20) {
-        if let selectedCategory = sampleCategories.first(where: { $0.id == selectedCategoryId }) {
-          Text("\(selectedCategory.emoji) \(selectedCategory.name)")
+        
+          Text("\(selectedCategoryEntity.emoji) \(selectedCategoryEntity.name)")
             .font(.headline)
             .frame(maxWidth: .infinity)
             .padding()
             .background(Color.gray.opacity(0.2))
             .cornerRadius(8)
             .padding(.horizontal)
-        }
 
 
         VStack {
           Text("태그 선택")
 
           let columns = Array(repeating: GridItem(.flexible()), count: 4)
-          let filteredTags = sampleTags.filter { $0.category_id == selectedCategoryId }
 
           LazyVGrid(columns: columns, spacing: 12) {
-            ForEach(filteredTags) { tag in
+            ForEach(selectedCategoryEntity.tags) { tag in
               VStack(spacing: 2) {
                 Text(tag.emoji)
                   .font(.largeTitle)
@@ -106,8 +107,6 @@ struct FeedWriteView: View {
 
         }
 
-
-
         Button(action: {
           // TODO: 저장 액션
           dismiss()
@@ -148,6 +147,6 @@ struct FeedWriteView: View {
 
 #Preview {
   NavigationStack {
-    FeedWriteView()
+//    FeedWriteView()
   }
 }
