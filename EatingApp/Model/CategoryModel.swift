@@ -5,7 +5,7 @@
 //  Created by 이치훈 on 5/13/25.
 //
 
-import Foundation
+import SwiftUI
 import SwiftData
 
 struct CategoryModel: Identifiable {
@@ -15,23 +15,20 @@ struct CategoryModel: Identifiable {
   	let imageName: String
 }
 
-@Model
-class CategoryEntity {
-  @Attribute(.unique) var name: String
-  var emoji: String
-  var imageName: String
+enum Category: String, CaseIterable {
+  case food = "음식"
+  case drink = "음료"
+  case pill = "영양제"
+}
 
-  @Relationship(inverse: \FeedEntity.category)
-  var feeds = [FeedEntity]()
+extension Category: Identifiable, Hashable {
+  var id: Self { return self }
   
-  @Relationship(inverse: \TagEntity.category)
-  var tags = [TagEntity]()
-
-
-
-  init(name: String, emoji: String, imageName: String) {
-    self.name = name
-    self.emoji = emoji
-    self.imageName = imageName
+  var icon: Image {
+    switch self {
+    case .food: return Image(.bob)
+    case .drink: return Image(.drink)
+    case .pill: return Image(.drug)
+    }
   }
 }

@@ -14,6 +14,7 @@ struct EatingAppApp: App {
         WindowGroup {
             HomeView()
         }
-        .modelContainer(for: CategoryEntity.self)
+        .modelContainer(try! ModelContainer.samples())
+//        .modelContainer(for: FeedEntity.self)
     }
 }
