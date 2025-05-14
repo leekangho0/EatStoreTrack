@@ -10,96 +10,81 @@ import SwiftData
 
 struct HomeView: View {
   
-  @Query var feeds: [FeedEntity]
-  @State var showPopup = false
-  @State var selectedYear = Calendar.current.component(.year, from: Date())
-  @State var selectedMonth = Calendar.current.component(.month, from: Date())
+  @Query(sort: \FeedEntity.createdDate) var feeds: [FeedEntity]
+  
+  @State var selectedYear = Date()
   @State var isSelectedPlusButton: Bool = false
-  
-  let menuYears = Array(2020...2030)
-  let menuMonths = Array(1...12)
-  
-  
-  init() {
-  }
+  @State var seletedCategory: Category?
+  @State var showCalendar = false
   
   var body: some View {
     NavigationStack {
-      ZStack {
-        ZStack {
-          FeedListView()
-            .padding(.top, 40)
-          
-          VStack {
-            Spacer()
-            
+      VStack {
+      FeedListView()
+        .padding(.top, 40)
+      }
+      .overlay {
+        VStack(alignment: .trailing) {
+          Spacer()
             Button {
               withAnimation {
-                showPopup.toggle()
                 isSelectedPlusButton.toggle()
               }
             } label: {
-              Image("plus")
+              Image(systemName: "plus.circle.fill")
                 .resizable()
                 .scaledToFit()
+                .background(.white.opacity(0.3))
                 .frame(width: 60, height: 60)
                 .rotationEffect(.degrees(isSelectedPlusButton ? 90 : .zero))
                 .animation(.easeInOut(duration: 0.2), value: isSelectedPlusButton)
+                .clipShape(.circle)
+                .shadow(radius: Metric.cornerRadius)
             }
-            
-            
+            .padding([.trailing, .bottom], 30)
+            .frame(maxWidth: .infinity, alignment: .trailing)
           }
-        }
-        
-        if showPopup {
-          Color.black.opacity(0.3)
-            .ignoresSafeArea()
-            .onTapGesture {
-              withAnimation {
-                showPopup = false
-              }
-            }
-        }
-        
-        if showPopup {
-          VStack {
-            Spacer()
-            CategoryPopUpView()
-              .padding(.bottom, 60)
-          }
+      }
+      .background(.pBack1)
+      .navigationDestination(item: $seletedCategory) { category in
+        FeedWriteView(category: category)
+      }
+      .sheet(isPresented: $showCalendar) {
+        YearMonthPickerView(selectedDate: $selectedYear)
+          .presentationDetents([.fraction(0.3)])
+          .presentationCornerRadius(Metric.cornerRadius * 2)
+      }
+      .fullScreenCover(isPresented: $isSelectedPlusButton) {
+        FadeOutSheetView {
+          CategoryPopUpView(item: $seletedCategory)
+            .padding(.bottom, 90)
         }
       }
-//      .navigationTitle("Home")
-      .navigationDestination(for: Category.self) { category in
-        FeedWriteView(category: category)
+      .transaction {
+        $0.disablesAnimations = true
       }
       .toolbar {
         ToolbarItemGroup(placement: .navigationBarLeading) {
-          VStack(alignment: .leading, spacing: -5) {
-            Menu {
-              ForEach(menuYears, id: \.self) { year in
-                Button("\(String(year)) 년") {
-                  self.selectedYear = year
-                }
-              }
-            } label: {
-              Text("\(String(selectedYear))년")
-                .font(.system(size: 20))
+          HStack {
+            VStack(alignment: .leading) {
+              Text(selectedYear.year())
+                .font(.callout)
+              Text(selectedYear.month())
+                .font(.title)
             }
+            .padding(.vertical)
+            .padding(.leading)
             
-            Menu {
-              ForEach(menuMonths, id: \.self) { month in
-                Button("\(month) 월") {
-                  self.selectedMonth = month
-                }
-              }
-            } label: {
-              Text("\(selectedMonth)월")
-                .font(.system(size: 30))
-            }
+            Image(systemName: "chevron.right")
+              .resizable()
+              .scaledToFit()
+              .frame(width: 25, height: 25)
+              .fontWeight(.bold)
           }
           .foregroundColor(.primary)
-          .padding(.leading, 20)
+          .onTapGesture {
+            showCalendar.toggle()
+          }
         }
         
         ToolbarItemGroup(placement: .navigationBarTrailing) {
@@ -116,10 +101,6 @@ struct HomeView: View {
       } //: ZStack
     } //: NavigationStack
   } //: body
-
-}
-
-extension HomeView {
   
 }
 
@@ -130,21 +111,27 @@ extension HomeView {
 }
 
 fileprivate struct CategoryPopUpView: View {
+  @Binding var item: Category?
+  @Environment(\.dismiss) var dismiss
   
   var body: some View {
     HStack(spacing: 30) {
       ForEach(Category.allCases) { category in
-        NavigationLink(value: category) {
-          VStack {
-            category.icon
-          }
+        Button {
+          item = category
+          dismiss()
+        } label: {
+          category.icon
+            .resizable()
+            .scaledToFit()
+            .frame(width: 80, height:80)
         }
       }
     }
     .padding()
     .background(.ultraThinMaterial)
-    .clipShape(RoundedRectangle(cornerRadius: 20))
-    .shadow(radius: 10)
+    .clipShape(RoundedRectangle(cornerRadius: Metric.cornerRadius))
+    .shadow(radius: Metric.shadowRadius)
     .transition(.move(edge: .bottom).combined(with: .opacity))
   }
 }
