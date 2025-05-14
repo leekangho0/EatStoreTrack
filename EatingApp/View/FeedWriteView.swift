@@ -6,13 +6,17 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct FeedWriteView: View {
   
   @Environment(\.dismiss) var dismiss
+  @Environment(\.modelContext) private var modelContext
   @State private var content: String = ""
   @State private var showImagePicker = false
   @State private var selectedImage: UIImage?
+  @State private var selectedTagEntitys: [TagEntity]?
+  @State private var selectedTagIDs: Set<PersistentIdentifier> = [] // 선택된 tag를 관리하는 set
   
   let selectedCategoryEntity: CategoryEntity
 
@@ -41,6 +45,8 @@ struct FeedWriteView: View {
 
           LazyVGrid(columns: columns, spacing: 12) {
             ForEach(selectedCategoryEntity.tags) { tag in
+              let isSelected = selectedTagIDs.contains(tag.persistentModelID)
+              
               VStack(spacing: 2) {
                 Text(tag.emoji)
                   .font(.largeTitle)
@@ -48,12 +54,27 @@ struct FeedWriteView: View {
                   .font(.caption2)
               }
               .frame(width: 70, height: 70)
-              .background(Color.gray.opacity(0.15))
+              .background(isSelected ? Color.gray.opacity(0.15) : Color.clear)
+              // isSelected 값에 따라서 배경색을 정하는 코드입니다.
               .cornerRadius(10)
+              .onTapGesture {
+                if isSelected {
+                  selectedTagIDs.remove(tag.persistentModelID)
+                  
+                } else {
+                  selectedTagIDs.insert(tag.persistentModelID)
+                }
+                
+                // selectedTagIDs에 포함된 ID들에 해당하는 TagEntity 객체들만 추려내서,
+                // selectedTagEntitys: [TagEntity]에 저장합니다.
+                selectedTagEntitys = selectedCategoryEntity.tags.filter {
+                  selectedTagIDs.contains($0.persistentModelID)
+                }
+              }
             }
-          }
+          } //: LazyVGrid
           .padding(.horizontal)
-        }
+        } //: VStack
 
 
 
@@ -127,6 +148,7 @@ struct FeedWriteView: View {
       .toolbar {
         ToolbarItem(placement: .navigationBarLeading) {
           Button {
+            self.saveFeed()
             dismiss()
           } label: {
             Image(systemName: "chevron.left")
@@ -143,6 +165,34 @@ struct FeedWriteView: View {
       ImagePicker(image: $selectedImage)
     }
   }
+}
+
+extension FeedWriteView {
+  
+  func saveFeed() {
+    guard let selectedTagEntitys = selectedTagEntitys else { return }
+    guard let selectedImage = selectedImage, let imageData = selectedImage.jpegData(compressionQuality: 0.8) else { return }
+    // selectedImage 이미지 압축
+    
+    let newFeed = FeedEntity(
+      content: self.content,
+      category: self.selectedCategoryEntity,
+      tags: selectedTagEntitys,
+      image: imageData
+    )
+    
+    modelContext.insert(newFeed)
+    
+    do {
+      try modelContext.save()
+      
+      let savedFeeds = try modelContext.fetch(FetchDescriptor<FeedEntity>())
+      print("저장된 Feed 개수: \(savedFeeds.count)")
+    } catch {
+      print("\(error): saveFeed에서 발생한 에러")
+    }
+  }
+  
 }
 
 #Preview {

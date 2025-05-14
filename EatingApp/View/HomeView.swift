@@ -70,47 +70,8 @@ struct HomeView: View {
           }
         }
       } //: ZStack
-      .onAppear {
-//        if categories.isEmpty {
-//          insertSampleCategories()
-//          //deleteAllCategories()
-//        }
-      }
     } //: NavigationStack
   } //: body
-  
-//  private func insertSampleCategories() {
-//    let samples: [(String, String, String)] = [
-//      ("먹을거", "📚", "study"),
-//      ("마실거", "🏃‍♂️", "exercise"),
-//      ("영양제", "📖", "reading")
-//    ]
-//    
-//    for (name, emoji, imageName) in samples {
-//      let category = CategoryEntity(name: name, emoji: emoji, imageName: imageName)
-//      modelContext.insert(category)
-//    }
-//    
-//    do {
-//      try modelContext.save()
-//      print("✅ 샘플 카테고리 저장 완료")
-//    } catch {
-//      print("❌ 샘플 저장 실패: \(error)")
-//    }
-//  }
-  
-//  private func deleteAllCategories() {
-//      for category in categories {
-//          modelContext.delete(category)
-//      }
-//
-//      do {
-//          try modelContext.save()
-//          print("🗑️ 모든 카테고리 삭제 완료")
-//      } catch {
-//          print("❌ 삭제 실패: \(error)")
-//      }
-//  }
 
 }
 
