@@ -34,7 +34,7 @@ class FeedEntity {
   @Attribute(.externalStorage)
   var image: Data?
   
-  init(content: String, category: Category, tags: [TagEntity]) {
+  init(content: String, category: Category, tags: [TagEntity], image: Data? = nil) {
     self.content = content
     self.id = UUID().uuidString
     self.category = category.rawValue

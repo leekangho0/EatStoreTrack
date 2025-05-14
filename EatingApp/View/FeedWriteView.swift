@@ -10,6 +10,7 @@ import SwiftData
 
 struct FeedWriteView: View {
   
+  @Query var filteredTags: [TagEntity]
   @Environment(\.dismiss) var dismiss
   @Environment(\.modelContext) private var modelContext
   @State private var content: String = ""
@@ -18,10 +19,15 @@ struct FeedWriteView: View {
   @State private var selectedTagEntitys: [TagEntity]?
   @State private var selectedTagIDs: Set<PersistentIdentifier> = [] // 선택된 tag를 관리하는 set
   
-  let selectedCategoryEntity: CategoryEntity
+  let selectedCategoryEntity: Category
 
-  init(selectedCategoryEntity: CategoryEntity) {
+  init(selectedCategoryEntity: Category) {
     self.selectedCategoryEntity = selectedCategoryEntity
+    
+    let predicate = #Predicate<TagEntity> { tag in
+      tag.category == selectedCategoryEntity.rawValue
+    }
+    _filteredTags = Query(filter: predicate, sort: [SortDescriptor(\TagEntity.name)])
   }
 
   var body: some View {
@@ -29,22 +35,25 @@ struct FeedWriteView: View {
     ScrollView {
       VStack(spacing: 20) {
         
-          Text("\(selectedCategoryEntity.emoji) \(selectedCategoryEntity.name)")
+        HStack {
+          selectedCategoryEntity.icon
+          
+          Text(selectedCategoryEntity.rawValue)
             .font(.headline)
             .frame(maxWidth: .infinity)
             .padding()
             .background(Color.gray.opacity(0.2))
             .cornerRadius(8)
             .padding(.horizontal)
-
-
+        }
+        
         VStack {
           Text("태그 선택")
-
+          
           let columns = Array(repeating: GridItem(.flexible()), count: 4)
-
+          
           LazyVGrid(columns: columns, spacing: 12) {
-            ForEach(selectedCategoryEntity.tags) { tag in
+            ForEach(filteredTags) { tag in
               let isSelected = selectedTagIDs.contains(tag.persistentModelID)
               
               VStack(spacing: 2) {
@@ -67,7 +76,7 @@ struct FeedWriteView: View {
                 
                 // selectedTagIDs에 포함된 ID들에 해당하는 TagEntity 객체들만 추려내서,
                 // selectedTagEntitys: [TagEntity]에 저장합니다.
-                selectedTagEntitys = selectedCategoryEntity.tags.filter {
+                selectedTagEntitys = filteredTags.filter {
                   selectedTagIDs.contains($0.persistentModelID)
                 }
               }
