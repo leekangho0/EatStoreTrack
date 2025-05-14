@@ -10,26 +10,48 @@ import SwiftData
 
 struct HomeView: View {
   
+  @Query var feeds: [FeedEntity]
   @State var showPopup = false
+  @State var selectedYear = Calendar.current.component(.year, from: Date())
+  @State var selectedMonth = Calendar.current.component(.month, from: Date())
+  @State var isSelectedPlusButton: Bool = false
+  
+  let menuYears = Array(2020...2030)
+  let menuMonths = Array(1...12)
+  
+  
+  init() {
+    
+//    let predicate = #Predicate<FeedEntity> { feed in
+//      feed.createdDate.year == $selectedYear.year
+//    }
+  }
   
   var body: some View {
     NavigationStack {
       ZStack {
-        VStack {
+        ZStack {
           FeedListView()
+            .padding(.top, 40)
           
-          Button {
-            withAnimation {
-              showPopup.toggle()
+          VStack {
+            Spacer()
+            
+            Button {
+              withAnimation {
+                showPopup.toggle()
+                isSelectedPlusButton.toggle()
+              }
+            } label: {
+              Image("plus")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 60, height: 60)
+                .rotationEffect(.degrees(isSelectedPlusButton ? 90 : .zero))
+                .animation(.easeInOut(duration: 0.2), value: isSelectedPlusButton)
             }
-          } label: {
-            Text("새글작성")
-              .padding()
-              .frame(maxWidth: .infinity)
-              .background(Color.blue)
-              .foregroundColor(.white)
-              .clipShape(Capsule())
-              .padding(.horizontal)
+            
+            
           }
         }
         
@@ -51,13 +73,41 @@ struct HomeView: View {
           }
         }
       }
-      .navigationTitle("Home")
+//      .navigationTitle("Home")
       .navigationDestination(for: Category.self) { category in
         VStack {
           Text(category.rawValue)
         }
       }
       .toolbar {
+        ToolbarItemGroup(placement: .navigationBarLeading) {
+          VStack(alignment: .leading, spacing: -5) {
+            Menu {
+              ForEach(menuYears, id: \.self) { year in
+                Button("\(String(year)) 년") {
+                  self.selectedYear = year
+                }
+              }
+            } label: {
+              Text("\(String(selectedYear))년")
+                .font(.system(size: 20))
+            }
+            
+            Menu {
+              ForEach(menuMonths, id: \.self) { month in
+                Button("\(month) 월") {
+                  self.selectedMonth = month
+                }
+              }
+            } label: {
+              Text("\(selectedMonth)월")
+                .font(.system(size: 30))
+            }
+          }
+          .foregroundColor(.primary)
+          .padding(.leading, 20)
+        }
+        
         ToolbarItemGroup(placement: .navigationBarTrailing) {
           NavigationLink(destination: StasticsView()) {
             Image(systemName: "chart.pie")
@@ -72,6 +122,10 @@ struct HomeView: View {
       }
     }
   }
+}
+
+extension HomeView {
+  
 }
 
 #Preview {
