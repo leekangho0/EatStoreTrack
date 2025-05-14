@@ -13,65 +13,69 @@ struct SearchView: View {
   @State private var navigateToResult = false
   @State var selectedTags: Set<Int> = []
 
-    var body: some View {
-      ScrollView {
-        VStack {
-          // 아 맞다 텍스트검색 빼기로했지
-          //            TextField("검색어를 입력하세요", text: $searchText)
-          //                .textFieldStyle(RoundedBorderTextFieldStyle())
-          //                .padding(.horizontal)
+  var body: some View {
+    ZStack {
+      Color.pBack1
+        .ignoresSafeArea()
 
-          let columns = Array(repeating: GridItem(.flexible()), count: 4)
+      VStack {
+        Spacer().frame(minHeight: 20, maxHeight: 30)
+        ScrollView {
+          VStack {
 
-          LazyVGrid(columns: columns, spacing: 12) {
-            ForEach(sampleTags) { tag in
-              Button(action: {
-                if selectedTags.contains(tag.id) {
-                  selectedTags.remove(tag.id)
-                } else {
-                  selectedTags.insert(tag.id)
+            let columns = Array(repeating: GridItem(.flexible()), count: 4)
+
+            LazyVGrid(columns: columns, spacing: 12) {
+              ForEach(sampleTags) { tag in
+                Button(action: {
+                  if selectedTags.contains(tag.id) {
+                    selectedTags.remove(tag.id)
+                  } else {
+                    selectedTags.insert(tag.id)
+                  }
+                }) {
+                  VStack(spacing: 2) {
+                    Text(tag.emoji)
+                      .font(.largeTitle)
+
+                    Text(tag.name)
+                      .font(.caption2)
+                  }
+                  .frame(width: 70, height: 70)
+                  .foregroundStyle(selectedTags.contains(tag.id) ? Color.pWhiteBlack : Color.accentColor)
+                  .background(selectedTags.contains(tag.id) ? Color.pAccent2 : Color.pWhiteBlack)
+                  .cornerRadius(10)
+                  .compositingGroup()
+                  .shadow(color: Color.pShadow.opacity(0.2), radius: 4, y:2)
                 }
-              }) {
-                VStack(spacing: 2) {
-                  Text(tag.emoji)
-                    .font(.largeTitle)
-
-                  Text(tag.name)
-                    .font(.caption2)
-                }
-                .frame(width: 70, height: 70)
-                .background(selectedTags.contains(tag.id) ? Color.yellow : Color.gray.opacity(0.15))
-                .cornerRadius(10)
               }
             }
-          }
-          .padding(.horizontal)
+            .padding(.horizontal)
 
-          Button("검색") {
-            navigateToResult = true
-          }
-          .buttonStyle(.borderedProminent)
-        }
-        .navigationDestination(isPresented: $navigateToResult) {
-          SearchResultView(selectedTags: selectedTags)
-        }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-          ToolbarItem(placement: .navigationBarLeading) {
-            Button {
-              dismiss()
-            } label: {
-              Image(systemName: "chevron.left")
-            }
-          }
 
-          ToolbarItem(placement: .principal) {
-            Text("태그 검색")
-              .font(.headline)
+          }
+          .navigationDestination(isPresented: $navigateToResult) {
+            SearchResultView(selectedTags: selectedTags)
           }
         }
       }
+      VStack {
+        Spacer()
+        Button {
+          navigateToResult = true
+        } label: {
+          Image(systemName: "magnifyingglass")
+            .font(.largeTitle)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 4)
+        }
+        .padding(20)
+        .buttonStyle(.borderedProminent)
+      }
     }
+    .navigationTitle("검색")
+    .navigationBarTitleDisplayMode(.large)
+  }
 }
 
 #Preview {

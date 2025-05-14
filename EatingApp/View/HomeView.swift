@@ -119,9 +119,10 @@ struct HomeView: View {
             Image(systemName: "magnifyingglass")
           }
         }
-      }
-    }
-  }
+      } //: ZStack
+    } //: NavigationStack
+  } //: body
+
 }
 
 extension HomeView {

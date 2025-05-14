@@ -17,44 +17,43 @@ struct TagManageView: View {
   @State private var showNewTag = false
   
   var body: some View {
-    VStack {
-      Picker("카테고리 선택", selection: $selectedCategory) {
-        Text("All").tag("All")
-        ForEach(Category.allCases) { category in
-          Text(category.rawValue)
-            .tag(category.rawValue)
+    ZStack {
+      Color.pBack1
+        .ignoresSafeArea()
+
+      VStack {
+        Picker("카테고리 선택", selection: $selectedCategory) {
+          Text("All").tag("All")
+          ForEach(Category.allCases) { category in
+            Text(category.rawValue)
+              .tag(category.rawValue)
+          }
         }
+        .pickerStyle(.palette)
+        .padding()
+        TagGridView(category: selectedCategory, selectedTag: $selectedTag)
       }
-      .pickerStyle(.palette)
-      .padding()
-      TagGridView(category: selectedCategory, selectedTag: $selectedTag)
-    }
-    .navigationBarBackButtonHidden(true)
-    .sheet(isPresented: $showNewTag, content: {
-      TagCreateView(tag: nil)
-    })
-    .sheet(item: $selectedTag, content: { tag in
-      TagCreateView(tag: tag)
-    })
-    .toolbar {
-      ToolbarItem(placement: .topBarLeading) {
-        Button {
-          dismiss()
-        } label: {
-          Image(systemName: "chevron.left")
-        }
-      }
-      
-      ToolbarItem(placement: .principal) {
-        Text("태그 관리")
-          .font(.headline)
-      }
-      
-      ToolbarItem(placement: .topBarTrailing) {
-        Button {
-          showNewTag.toggle()
-        } label: {
-          Image(systemName: "plus")
+      .navigationTitle("태그 관리")
+      .navigationBarTitleDisplayMode(.large)
+      .sheet(isPresented: $showNewTag, content: {
+        TagCreateView(tag: nil)
+          .presentationDragIndicator(.visible)
+          .presentationDetents([.large, .large])
+          .presentationBackground(Color.pBack1)
+      })
+      .sheet(item: $selectedTag, content: { tag in
+        TagCreateView(tag: tag)
+          .presentationDragIndicator(.visible)
+          .presentationDetents([.large, .large])
+          .presentationBackground(Color.pBack1)
+      })
+      .toolbar {
+        ToolbarItem(placement: .topBarTrailing) {
+          Button {
+            showNewTag.toggle()
+          } label: {
+            Image(systemName: "plus")
+          }
         }
       }
     }
@@ -82,13 +81,22 @@ struct TagGridView: View {
           Button {
             selectedTag = tag
           } label: {
-            VStack(spacing: 0) {
+            VStack(spacing: -12) {
               Text(tag.emoji)
                 .font(.largeTitle)
                 .padding()
               Text(tag.name)
+                .font(.caption)
                 .foregroundStyle(.black)
+                .padding(.bottom, 4)
             }
+            .padding(.horizontal, 4)
+            .aspectRatio(1.0, contentMode: .fit)
+            .background(RoundedRectangle(cornerRadius: 16)
+              .fill(Color.pWhiteBlack))
+            .compositingGroup()
+            .shadow(color: Color.pShadow.opacity(0.2), radius: 4, y:2)
+
           }
         }
       }
