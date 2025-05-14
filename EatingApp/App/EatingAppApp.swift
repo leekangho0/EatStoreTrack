@@ -12,7 +12,7 @@ import SwiftData
 struct EatingAppApp: App {
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            FirstView()
         }
         .modelContainer(try! ModelContainer.samples())
 //        .modelContainer(for: FeedEntity.self)
