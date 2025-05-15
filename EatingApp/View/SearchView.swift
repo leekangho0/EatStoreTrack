@@ -73,8 +73,15 @@ struct SearchView: View {
         .buttonStyle(.borderedProminent)
       }
     }
-    .navigationTitle("검색")
-    .navigationBarTitleDisplayMode(.large)
+//    .navigationTitle("검색")
+    .toolbar {
+      ToolbarItem(placement: .principal) {
+        Text("검색")
+          .foregroundColor(.primary)
+          .font(.system(size: 25, weight: .bold))
+      }
+    }
+    .navigationBarTitleDisplayMode(.inline)
   }
 }
 

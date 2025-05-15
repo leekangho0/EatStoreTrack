@@ -33,8 +33,7 @@ struct TagManageView: View {
         .padding()
         TagGridView(category: selectedCategory, selectedTag: $selectedTag)
       }
-      .navigationTitle("태그 관리")
-      .navigationBarTitleDisplayMode(.large)
+      .navigationBarTitleDisplayMode(.inline)
       .sheet(isPresented: $showNewTag, content: {
         TagCreateView(tag: nil)
           .presentationDragIndicator(.visible)
@@ -48,6 +47,13 @@ struct TagManageView: View {
           .presentationBackground(Color.pBack1)
       })
       .toolbar {
+        ToolbarItem(placement: .principal) {
+          Text("태그 관리")
+            .foregroundColor(.primary)
+            .font(.system(size: 25, weight: .bold))
+        }
+        
+        
         ToolbarItem(placement: .topBarTrailing) {
           Button {
             showNewTag.toggle()

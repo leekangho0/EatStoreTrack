@@ -264,8 +264,14 @@ struct StasticsView: View {
 
       }
       .padding(.horizontal, 20)
-      .navigationTitle("통계")
-      .navigationBarTitleDisplayMode(.large)
+      .toolbar {
+        ToolbarItem(placement: .principal) {
+          Text("통계")
+            .foregroundColor(.primary)
+            .font(.system(size: 25, weight: .bold))
+        }
+      }
+      .navigationBarTitleDisplayMode(.inline)
       .onAppear {
         updateDateRange()
       }
