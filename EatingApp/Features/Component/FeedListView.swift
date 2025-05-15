@@ -37,7 +37,9 @@ struct FeedListView: View {
     
     self.selectedTag = selectedTag
     _items = Query(filter: #Predicate<FeedEntity> {
-      $0.content.localizedStandardContains(text)
+      $0.content.localizedStandardContains(text) || $0.tags.contains(where: { tag in
+        tag.name == text
+      })
     }, sort: sort, animation: .bouncy)
   }
   
