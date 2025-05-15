@@ -68,8 +68,15 @@ struct FeedWriteView: View {
           .background(.pYellow)
           .clipShape(RoundedRectangle(cornerRadius: Metric.cornerRadius))
 
-        Text("끄적끄적")
-        
+        HStack {
+          Text("끄적끄적")
+          
+          Spacer()
+          
+          Text("\(content.count)자 / 최대 20자")
+            .font(.system(size: 15))
+        }
+          
         TextField(
           "",
           text: $content,
