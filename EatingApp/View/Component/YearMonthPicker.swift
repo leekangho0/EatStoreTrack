@@ -70,7 +70,7 @@ struct YearMonthPickerView: View {
             .frame(width: 60, height: 33)
             .bold()
             .background(item == selectedDate.month() ? Color(.accent) : Color(.pYellow))
-            .foregroundStyle(item == selectedDate.month() ? .white : .black)
+            .foregroundStyle(item == selectedDate.month() ? .black : .white) // TODO: White를 accent로
             .cornerRadius(8)
             .onTapGesture {
               var calender = Calendar.current

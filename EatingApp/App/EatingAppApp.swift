@@ -15,6 +15,6 @@ struct EatingAppApp: App {
             FirstView()
         }
         .modelContainer(try! ModelContainer.samples())
-//        .modelContainer(for: FeedEntity.self)
+        .modelContainer(for: FeedEntity.self)
     }
 }
