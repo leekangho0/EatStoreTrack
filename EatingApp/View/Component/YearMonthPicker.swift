@@ -7,22 +7,6 @@
 
 import SwiftUI
 
-extension Date {
-  func year() -> String {
-    let formatter = DateFormatter()
-    formatter.locale = Locale(identifier: "ko_KR")
-    formatter.dateFormat = "yyyy년"
-    return formatter.string(from: self)
-  }
-  
-  func month() -> String {
-    let formatter = DateFormatter()
-    formatter.locale = Locale(identifier: "ko_KR")
-    formatter.dateFormat = "M월"
-    return formatter.string(from: self)
-  }
-}
-
 struct YearMonthPickerView: View {
   @Binding var selectedDate: Date
   @Environment(\.dismiss) var dismiss
