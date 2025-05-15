@@ -13,6 +13,8 @@ struct StasticsView: View {
   @State var isMonthly: Bool = true // 월간이면 true 주간이면 false
   @State var selectedCategory: Int = 0
 
+  @State var selectedCategory: CategoryFilter = .all
+  
   @State var weekOffset: Int = 0 // 현재시점에서 몇주 이동했는지
 
 
@@ -183,6 +185,12 @@ struct StasticsView: View {
               Spacer()
             }
             .padding(20)
+          
+          StatisticsHeaderView(selectedCategory: $selectedCategory)
+          
+          HYearMonthPickerView(startDate: startDate, endDate: endDate, weekOffset: $weekOffset, isMonthly: isMonthly)
+          
+          Text("이 기간동안 총 \(feedCount)개 기록했어요")
             .foregroundStyle(Color.accentColor)
             .background(RoundedRectangle(cornerRadius: 16)
             .foregroundColor(Color.pBack1.opacity(0.5)))
@@ -307,6 +315,41 @@ struct PaddedBackgroundStyle: ViewModifier {
       .clipShape(RoundedRectangle(cornerRadius: 10))
       .compositingGroup()
       .shadow(color: Color.pShadow.opacity(0.3), radius: 4, y:2)
+fileprivate struct StatisticsHeaderView: View {
+  @Binding var selectedCategory: CategoryFilter
+  
+  var body: some View {
+    VStack {
+      
+      Menu {
+        ForEach(CategoryFilter.allCases) { category in
+          Button {
+            selectedCategory = category
+          } label: {
+            HStack {
+              category.icon
+                .resizable()
+                .frame(width: 50, height: 50)
+              Text(category.name)
+            }
+          }
+        }
+      } label: {
+        HStack {
+          selectedCategory.icon
+            .resizable()
+            .scaledToFit()
+            .frame(width: 80, height: 80)
+        }
+        .background(
+          RoundedRectangle(cornerRadius: 20)
+            .frame(width: 80, height: 80)
+            .foregroundColor(Color.pWhiteBlack.opacity(0.9))
+        )
+        .compositingGroup()
+        .shadow(color: Color.pShadow.opacity(0.3), radius: 4, y:2)
+      }
+    }
   }
 }
 
