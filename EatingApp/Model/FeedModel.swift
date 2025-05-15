@@ -42,6 +42,6 @@ class FeedEntity {
     self.createdDate = Date()
     self.updatedDate = Date()
     self.tags = tags
-    self.image = nil
+    self.image = image
   }
 }
