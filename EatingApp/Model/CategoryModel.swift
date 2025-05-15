@@ -21,6 +21,34 @@ enum Category: String, CaseIterable {
   case pill = "영양제"
 }
 
+enum CategoryFilter: Identifiable, CaseIterable {
+  case all
+  case category(Category)
+  
+  var id: String {
+    switch self {
+    case .all: return "All"
+    case .category(let category): return category.rawValue
+    }
+  }
+  
+  var name: String {
+    id
+  }
+  
+  var icon: Image {
+    switch self {
+    case .all: return Image(.logo)
+    case .category(let category):
+      return category.icon
+    }
+  }
+  
+  static var allCases: [CategoryFilter] {
+    [.all] + Category.allCases.map { .category($0) }
+  }
+}
+
 extension Category: Identifiable, Hashable {
   var id: Self { return self }
   

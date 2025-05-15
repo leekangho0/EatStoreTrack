@@ -193,6 +193,12 @@ extension FeedWriteView {
         image: selectedImageData
       )
       modelContext.insert(newFeed)
+      
+      do {
+        try modelContext.save()
+      } catch {
+        modelContext.rollback()
+      }
     }
     
     dismiss()
