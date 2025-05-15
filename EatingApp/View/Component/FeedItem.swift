@@ -11,6 +11,7 @@ struct FeedItem: View {
   let item: FeedEntity
   let onEdit: () -> Void
   let onDelete: () -> Void
+  @State var showAlert: Bool = false
   
   var body: some View {
     VStack(alignment: .trailing) {
@@ -19,9 +20,20 @@ struct FeedItem: View {
           Image(systemName: "square.and.pencil")
         }
         
-        Button(action: onDelete) {
+        Button{
+          showAlert = true
+        } label: {
           Image(systemName: "trash")
         }
+        .alert("정말 게시물을 삭제하시겠습니까?", isPresented: $showAlert) {
+          Button("삭제", role: .destructive) {
+            onDelete()
+          }
+          
+          Button("취소", role: .cancel) {}
+        } message: {
+          Text("이 작업은 되돌릴 수 없습니다.")
+        } //: alert
       }
       .bold()
       .padding([.trailing, .bottom], 5)
