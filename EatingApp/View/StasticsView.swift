@@ -34,43 +34,76 @@ struct StasticsView: View {
       
       VStack {
         VStack(spacing: 20) {
-          Text(rankingName)
-            .font(.largeTitle)
-            .foregroundStyle(Color.pText)
-            .fontWeight(.heavy)
-          
-          Rectangle()
-            .frame(height: 3)
-            .foregroundStyle(Color.pText)
-          
-          StatisticsHeaderView(selectedCategory: $selectedCategory)
-          
           HYearMonthPickerView(startDate: startDate, endDate: endDate, weekOffset: $weekOffset, isMonthly: isMonthly)
+          
+          VStack(alignment: .leading) {
+            HStack {
+              StatisticsHeaderView(selectedCategory: $selectedCategory)
+              Text(rankingName)
+                .font(.largeTitle)
+                .foregroundStyle(Color.pText)
+                .fontWeight(.heavy)
+                .padding(.horizontal)
+            }
+            
+            Rectangle()
+              .frame(height: 1)
+              .foregroundStyle(Color.pText)
+          }
           
           Text("이 기간동안 총 \(feedCount)개 기록했어요")
             .foregroundStyle(Color.accentColor)
             .padding(20)
           .frame(maxWidth: .infinity)
           .background(RoundedRectangle(cornerRadius: 16).foregroundColor(Color.white.opacity(0.9)))
-          
-          VStack {
-            ForEach(dailyUsage()) { rank in
+          if filteredFeeds.isEmpty {
+            ContentUnavailableView("오늘 하루 먹은 걸 기록해보세요!", systemImage: "spoon.serving", description: Text("식사, 간식, 음료 모두"))
+              .foregroundStyle(.accent)
+          } else {
+            VStack {
               HStack {
-                RankRow(rank: rank)
+                Text("가장 많이 작성한 요일")
+                  .font(.title3)
+                  .bold()
+                  .foregroundStyle(.accent)
+                Spacer()
+              }
+              ForEach(dailyUsage()) { rank in
+                HStack {
+                  RankRow(rank: rank)
+                }
               }
             }
+            .padding(10)
+            
+            
+            VStack {
+              HStack {
+                Text("가장 많이 사용한 태그")
+                  .font(.title3)
+                  .bold()
+                  .foregroundStyle(.accent)
+                Spacer()
+              }
+              ForEach(rank()) { rank in
+                HStack {
+                  RankRow(rank: rank)
+                }
+              }
+            }
+            .padding(10)
           }
-          .padding(10)
         }
         .padding()
-        .frame(maxWidth: .infinity, minHeight: 500)
+        .frame(maxWidth: .infinity)
         .background(
           RoundedRectangle(cornerRadius: 20)
             .fill(Color.pYellow)
         )
-        .compositingGroup()
         .shadow(color: Color.pShadow.opacity(0.2), radius: 4, y:2)
         .ignoresSafeArea(edges: .bottom)
+        
+        Spacer()
       }
       .padding(.horizontal, 20)
     }
@@ -99,7 +132,7 @@ extension StasticsView {
   
   private var filteredFeeds: [FeedEntity] {
     return feeds
-      .filter { $0.createdDate >= startDate && $0.createdDate <= endDate }
+      .filter { $0.createdDate >= startDate && $0.createdDate <= endDate && selectedCategory.id == CategoryFilter.all.id ? true : $0.category == selectedCategory.name }
   }
   
   private func rank() -> [Rank] {
@@ -121,8 +154,8 @@ extension StasticsView {
       .enumerated()
       .map { value in
         Rank(value.offset + 1, value.element.key.name, value.element.key.emoji, value.element.value)
-      }
-        return ranks
+      }.prefix(3)
+        return Array(ranks)
   }
   
   struct DailyUsage: Ranking {
@@ -152,9 +185,9 @@ extension StasticsView {
       .enumerated()
       .map { offset, element in
         DailyUsage(rank: offset + 1, day: element.key, count: element.value)
-      }
+      }.prefix(3)
     
-    return daily
+    return Array(daily)
   }
   
   private var feedCount: Int {

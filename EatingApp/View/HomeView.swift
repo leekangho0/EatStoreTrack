@@ -18,7 +18,7 @@ struct HomeView: View {
   var body: some View {
     NavigationStack {
       VStack {
-      FeedListView()
+      FeedListView(selectedDate: selectedYear)
         .padding(.top, 20)
       }
       .overlay {
@@ -43,6 +43,7 @@ struct HomeView: View {
             .frame(maxWidth: .infinity, alignment: .trailing)
           }
       }
+      .frame(maxWidth: .infinity)
       .background(.pBack1)
       .navigationDestination(item: $seletedCategory) { category in
         FeedWriteView(category: category)

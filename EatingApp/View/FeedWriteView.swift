@@ -70,7 +70,14 @@ struct FeedWriteView: View {
         
         Text("끄적끄적")
         
-        TextField("", text: $content, prompt: Text("지금을 기록해주세요. (10자 이내)").foregroundStyle(.pText), axis: .vertical)
+        TextField(
+          "",
+          text: $content,
+          prompt: Text("지금을 기록해주세요. (10자 이내)")
+            .foregroundStyle(Color.pText.opacity(0.3))
+            ,
+          axis: .vertical
+        )
           .padding()
           .background {
             Color.pYellow
