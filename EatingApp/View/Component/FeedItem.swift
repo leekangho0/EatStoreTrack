@@ -99,10 +99,10 @@ extension FeedItem {
         .resizable()
         .scaledToFill()
     } else {
-      Image(.textLogo)
+      Image(.primary)
         .resizable()
         .scaledToFit()
-        .opacity(0.3)
+        .opacity(0.6)
         .padding()
     }
   }
