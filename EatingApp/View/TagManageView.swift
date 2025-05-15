@@ -101,7 +101,7 @@ struct TagGridView: View {
             .background(RoundedRectangle(cornerRadius: 16)
               .fill(Color.pWhiteBlack))
             .compositingGroup()
-            .shadow(color: Color.pShadow.opacity(0.2), radius: 4, y:2)
+            .shadow(color: Color.pShadow.opacity(0.2), radius: 3, y:3)
 
           }
         }

@@ -67,7 +67,7 @@ struct TagCreateView: View {
             Text("저장하기")
               .padding()
               .frame(maxWidth: .infinity)
-              .background(Color.accentColor)
+              .background(Color.pAccent2)
               .foregroundColor(.white)
               .clipShape(Capsule())
               .padding(.horizontal)

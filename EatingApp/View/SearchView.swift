@@ -67,10 +67,14 @@ struct SearchView: View {
           Image(systemName: "magnifyingglass")
             .font(.largeTitle)
             .frame(maxWidth: .infinity)
+            .frame(height: 50)
             .padding(.vertical, 4)
+            .background(.pAccent2)
+            .clipShape(.buttonBorder)
         }
         .padding(20)
-        .buttonStyle(.borderedProminent)
+//        .buttonStyle(.borderedProminent)
+        
       }
     }
 //    .navigationTitle("검색")

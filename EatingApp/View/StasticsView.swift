@@ -119,7 +119,7 @@ struct StasticsView: View {
               .background(
                 RoundedRectangle(cornerRadius: 20)
                   .frame(width: 80, height: 80)
-                  .foregroundColor(Color.pWhiteBlack.opacity(0.9))
+                  .foregroundColor(Color.pWhiteBlack.opacity(0.5))
               )
               .compositingGroup()
               .shadow(color: Color.pShadow.opacity(0.3), radius: 4, y:2)
@@ -184,7 +184,8 @@ struct StasticsView: View {
             }
             .padding(20)
             .foregroundStyle(Color.accentColor)
-            .background(RoundedRectangle(cornerRadius: 16).foregroundColor(Color.white.opacity(0.9)))
+            .background(RoundedRectangle(cornerRadius: 16)
+            .foregroundColor(Color.pBack1.opacity(0.5)))
 
 
 //            VStack {
@@ -229,8 +230,8 @@ struct StasticsView: View {
                   Text("\(rank.count)회")
                 }
                 .font(.title)
-                .foregroundStyle(Color.pBack1)
-
+                .foregroundStyle(Color.white)
+//
 
               }
               .padding(10)
@@ -239,6 +240,7 @@ struct StasticsView: View {
               .background {
                 RoundedRectangle(cornerRadius: 18)
                   .fill(Color.pAccent2.opacity(0.9))
+//                  .fill(.pBack1.opacity(0.5))
                   .compositingGroup()
                   .shadow(color: Color.pShadow.opacity(0.2), radius: 2, y:1)
               }
@@ -301,7 +303,7 @@ struct PaddedBackgroundStyle: ViewModifier {
     content
       .padding(.horizontal, 16)
       .frame(height: 30)
-      .background(Color.pWhiteBlack.opacity(0.9))
+      .background(Color.pWhiteBlack.opacity(0.5))
       .clipShape(RoundedRectangle(cornerRadius: 10))
       .compositingGroup()
       .shadow(color: Color.pShadow.opacity(0.3), radius: 4, y:2)
