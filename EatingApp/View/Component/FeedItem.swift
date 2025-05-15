@@ -73,15 +73,15 @@ struct FeedItem: View {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4)) {
               ForEach(item.tags) { tag in
                 Text(tag.emoji)
-                  .font(.title)
+                  .font(.largeTitle)
                   .frame(width: 44, height: 44)
               }
             }
             .frame(maxWidth: .infinity)
             
             Text(item.content)
-              .font(.caption)
-              .fontWeight(.light)
+              .font(.headline)
+              .fontWeight(.semibold)
               .foregroundStyle(.accent)
             
             Spacer()
