@@ -15,9 +15,11 @@
   — E.S.T
 
 ## 📱 Features
-![Simulator Screen Recording - iPhone 16 Pro - 2025-05-16 at 00 57 04](https://github.com/user-attachments/assets/0752c0cc-c983-46b5-8e28-a041263480c4)
-![Simulator Screen Recording - iPhone 16 Pro - 2025-05-16 at 00 58 14](https://github.com/user-attachments/assets/21ce8424-410f-41f0-b735-13e805a2c1b9)
-![Simulator Screen Recording - iPhone 16 Pro - 2025-05-16 at 00 59 24](https://github.com/user-attachments/assets/fbfddc1f-51d7-4241-b8d6-908740b9d332)
+<p>
+<img src = "https://github.com/user-attachments/assets/0752c0cc-c983-46b5-8e28-a041263480c4" width=33% hgap = 10>
+<img src = "https://github.com/user-attachments/assets/21ce8424-410f-41f0-b735-13e805a2c1b9" width=33% hgap = 10>
+<img src = "https://github.com/user-attachments/assets/fbfddc1f-51d7-4241-b8d6-908740b9d332" width=33% hgap = 10>
+</p>
 
 - **SwiftData**를 이용한 피드 CRUD
 - **Query Macro**를 이용한 태그 및 콘텐츠 검색 구현
