@@ -6,35 +6,174 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct StasticsView: View {
   @Environment(\.dismiss) var dismiss
-
+  @Query var feeds: [FeedEntity]
+  
   @State var isMonthly: Bool = true // 월간이면 true 주간이면 false
-  @State var selectedCategory: Int = 0
-
   @State var selectedCategory: CategoryFilter = .all
   
   @State var weekOffset: Int = 0 // 현재시점에서 몇주 이동했는지
-
-
+  
   // TODO: 데이터 가져올 때는 월간이던 주간이던 이 두개랑 카테고리만 이용해서 가져오면 됩니다
   @State var startDate: Date = Date()
   @State var endDate: Date = Date()
+  
+  var body: some View {
+    ScrollView {
+      Picker("월간주간 선택", selection: $isMonthly) {
+        Text("월간")
+          .tag(true)
+        Text("주간")
+          .tag(false)
+      }
+      .pickerStyle(.palette)
+      .padding()
+      
+      VStack {
+        VStack(spacing: 20) {
+          Text(rankingName)
+            .font(.largeTitle)
+            .foregroundStyle(Color.pText)
+            .fontWeight(.heavy)
+          
+          Rectangle()
+            .frame(height: 3)
+            .foregroundStyle(Color.pText)
+          
+          StatisticsHeaderView(selectedCategory: $selectedCategory)
+          
+          HYearMonthPickerView(startDate: startDate, endDate: endDate, weekOffset: $weekOffset, isMonthly: isMonthly)
+          
+          Text("이 기간동안 총 \(feedCount)개 기록했어요")
+            .foregroundStyle(Color.accentColor)
+            .padding(20)
+          .frame(maxWidth: .infinity)
+          .background(RoundedRectangle(cornerRadius: 16).foregroundColor(Color.white.opacity(0.9)))
+          
+          VStack {
+            ForEach(dailyUsage()) { rank in
+              HStack {
+                RankRow(rank: rank)
+              }
+            }
+          }
+          .padding(10)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, minHeight: 500)
+        .background(
+          RoundedRectangle(cornerRadius: 20)
+            .fill(Color.pYellow)
+        )
+        .compositingGroup()
+        .shadow(color: Color.pShadow.opacity(0.2), radius: 4, y:2)
+        .ignoresSafeArea(edges: .bottom)
+      }
+      .padding(.horizontal, 20)
+    }
+    .toolbar {
+      ToolbarItem(placement: .principal) {
+        Text("보고서")
+          .foregroundColor(.primary)
+          .font(.system(size: 25, weight: .bold))
+      }
+    }
+    .navigationBarTitleDisplayMode(.inline)
+    .onAppear {
+      updateDateRange()
+    }
+    .onChange(of: isMonthly) { _, _ in
+      updateDateRange()
+    }
+    .onChange(of: weekOffset) { _, _ in
+      updateDateRange()
+    }
+    .background(Color.pBack1)
+  }
+}
 
-  var feedCount: Int = 0
-
-
+extension StasticsView {
+  
+  private var filteredFeeds: [FeedEntity] {
+    return feeds
+      .filter { $0.createdDate >= startDate && $0.createdDate <= endDate }
+  }
+  
+  private func rank() -> [Rank] {
+    let feedTagsArray = filteredFeeds
+      .map(\.tags)
+    
+    var dict = [TagEntity: Int]()
+    
+    feedTagsArray.forEach { tags in
+      tags.forEach { tag in
+        dict[tag, default: 0] += 1
+      }
+    }
+    
+    let sorted = dict
+      .sorted { $0.value > $1.value }
+      
+    let ranks = sorted
+      .enumerated()
+      .map { value in
+        Rank(value.offset + 1, value.element.key.name, value.element.key.emoji, value.element.value)
+      }
+        return ranks
+  }
+  
+  struct DailyUsage: Ranking {
+    let rank: Int
+    let day: String
+    let count: Int
+    
+    var id: String { day }
+    var value: String { day }
+  }
+  
+  private func dailyUsage() -> [DailyUsage] {
+    let dateFormatter = DateFormatter()
+    dateFormatter.locale = Locale(identifier: "ko_KR")
+    dateFormatter.dateFormat = "E"
+    
+    let dates = filteredFeeds
+      .map(\.createdDate)
+      .map(dateFormatter.string(from:))
+    
+    let result = dates.reduce(into: [String: Int]()) { partialResult, value in
+      partialResult[value, default: 0] += 1
+    }
+    let sorted = result.sorted { $0.value > $1.value }
+    
+    let daily = sorted
+      .enumerated()
+      .map { offset, element in
+        DailyUsage(rank: offset + 1, day: element.key, count: element.value)
+      }
+    
+    return daily
+  }
+  
+  private var feedCount: Int {
+    filteredFeeds.count
+  }
+  
+  private var rankingName: String {
+    isMonthly ? "월간 랭킹" : "주간 랭킹"
+  }
   // startDate 와 endDate 를 계산해주는 함수
   func updateDateRange() {
     let calendar = Calendar.current
     let today = Date()
-
+    
     if isMonthly {
       let thisMonth = calendar.date(byAdding: .month, value: weekOffset, to: today)!
       let components = calendar.dateComponents([.year, .month], from: thisMonth)
       startDate = calendar.date(from: components)!
-
+      
       var comps = DateComponents()
       comps.month = 1
       comps.day = -1
@@ -48,273 +187,18 @@ struct StasticsView: View {
       endDate = calendar.date(byAdding: .day, value: 6, to: startOfWeek)!
     }
   }
-
-  var body: some View {
-    ZStack {
-      Color.pBack1
-        .ignoresSafeArea()
-
-      VStack {
-
-        VStack(spacing: 20) {
-
-          Text("월간/주간 랭킹")
-            .font(.largeTitle)
-            .foregroundStyle(Color.pText)
-            .fontWeight(.heavy)
-
-          Rectangle()
-            .frame(height: 3)
-            .foregroundStyle(Color.pText)
-
-          HStack {
-            Picker("월간주간 선택", selection: $isMonthly) {
-              Text("월간")
-                .tag(true)
-              Text("주간")
-                .tag(false)
-            }
-            .pickerStyle(.palette)
-            .padding()
-
-
-            Spacer()
-
-            Menu {
-              Button {
-                selectedCategory = 0
-              } label: {
-                HStack {
-                  Image("logo")
-                    .resizable()
-                    .frame(width: 50, height: 50)
-                  Text("전체")
-                }
-              }
-
-              ForEach(sampleCategories) { category in
-                Button {
-                  selectedCategory = category.id
-                } label: {
-                  HStack {
-                    Image(category.imageName)
-                      .resizable()
-                      .frame(width: 50, height: 50)
-                    Text(category.name)
-                  }
-                }
-              }
-            } label: {
-              HStack(spacing: 0) {
-                if selectedCategory == 0 {
-                  Image("logo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 80, height: 80)
-                } else {
-                  Image(sampleCategories.first(where: { $0.id == selectedCategory })?.imageName ?? "questionmark")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 80, height: 80)
-                }
-              }
-              .background(
-                RoundedRectangle(cornerRadius: 20)
-                  .frame(width: 80, height: 80)
-                  .foregroundColor(Color.pWhiteBlack.opacity(0.5))
-              )
-              .compositingGroup()
-              .shadow(color: Color.pShadow.opacity(0.3), radius: 4, y:2)
-            }
-
-          }
-          .frame(height: 50)
-
-
-          VStack{
-            Text(dynamicYearLabel(from: startDate, to: endDate))
-              .paddedBackgroundStyle()
-              .font(.title3)
-
-            if isMonthly {
-              HStack {
-                Button {
-                  weekOffset -= 1
-                } label: {
-                  Image(systemName: "chevron.left")
-                    .paddedBackgroundStyle()
-                }
-
-                Text(monthLabel(from: startDate))
-                  .paddedBackgroundStyle()
-                  .font(.title3)
-
-                Button {
-                  weekOffset += 1
-                } label: {
-                  Image(systemName: "chevron.right")
-                    .paddedBackgroundStyle()
-                }
-              }
-            } else {
-              HStack {
-                Button {
-                  weekOffset -= 1
-                } label: {
-                  Image(systemName: "chevron.left")
-                    .paddedBackgroundStyle()
-                }
-
-                Text(dateRangeLabel(from: startDate, to: endDate))
-                  .paddedBackgroundStyle()
-                  .font(.title3)
-
-
-                Button {
-                  weekOffset += 1
-                } label: {
-                  Image(systemName: "chevron.right")
-                    .paddedBackgroundStyle()
-                }
-              }
-            }
-
-            HStack {
-              Spacer()
-              Text("이 기간동안 총 \(feedCount)개 기록했어요")
-              Spacer()
-            }
-            .padding(20)
-          
-          StatisticsHeaderView(selectedCategory: $selectedCategory)
-          
-          HYearMonthPickerView(startDate: startDate, endDate: endDate, weekOffset: $weekOffset, isMonthly: isMonthly)
-          
-          Text("이 기간동안 총 \(feedCount)개 기록했어요")
-            .foregroundStyle(Color.accentColor)
-            .background(RoundedRectangle(cornerRadius: 16)
-            .foregroundColor(Color.pBack1.opacity(0.5)))
-
-
-//            VStack {
-//              Text("디버깅용")
-//              Text("startDate: \(DateFormatter.localizedString(from: startDate, dateStyle: .medium, timeStyle: .none))")
-//              Text("endDate: \(DateFormatter.localizedString(from: endDate, dateStyle: .medium, timeStyle: .none))")
-//            }
-          }
-          .foregroundStyle(Color.accentColor)
-          .tint(Color.accentColor)
-
-
-          ScrollView {
-
-
-            // TODO: 데이터를 실시간으로 계산해서 가져올건데, 어떤 형식으로 가져올지 고민필요. 일단 이렇게 만듬
-            let sampleTopRanks: [(rank: Int, name: String, emoji: String, count: Int)] = [
-              (1, "토끼", "🐰", 10),
-              (2, "강아지", "🐶", 9),
-              (3, "고양이", "🐱", 8),
-              (4, "여우", "🦊", 7),
-              (5, "곰", "🐻", 6),
-              (6, "판다", "🐼", 5),
-              (7, "코알라", "🐨", 4),
-              (8, "호랑이", "🐯", 3),
-              (9, "사자", "🦁", 2),
-              (10, "돼지", "🐷", 1)
-            ]
-
-            ForEach(sampleTopRanks, id: \.rank) { rank in
-              HStack {
-                Text("\(rank.rank)위 ")
-                  .font(.largeTitle)
-                  .foregroundStyle(Color.white)
-
-                Spacer()
-
-                Group {
-                  Text("\(rank.emoji)")
-                  Text("\(rank.name)").font(.title3)
-                  Spacer().frame(width: 20)
-                  Text("\(rank.count)회")
-                }
-                .font(.title)
-                .foregroundStyle(Color.white)
-//
-
-              }
-              .padding(10)
-              .padding(.horizontal, 20)
-              .frame(maxWidth: .infinity)
-              .background {
-                RoundedRectangle(cornerRadius: 18)
-                  .fill(Color.pAccent2.opacity(0.9))
-//                  .fill(.pBack1.opacity(0.5))
-                  .compositingGroup()
-                  .shadow(color: Color.pShadow.opacity(0.2), radius: 2, y:1)
-              }
-            }
-          }
-          .padding(10)
-
-
-
-
-
-
-        }
-        .padding()
-        .frame(maxWidth: .infinity, minHeight: 500)
-        .background(
-          RoundedRectangle(cornerRadius: 20)
-            .fill(Color.pYellow)
-        )
-        .compositingGroup()
-        .shadow(color: Color.pShadow.opacity(0.2), radius: 4, y:2)
-        .ignoresSafeArea(edges: .bottom)
-
-      }
-      .padding(.horizontal, 20)
-      .toolbar {
-        ToolbarItem(placement: .principal) {
-          Text("통계")
-            .foregroundColor(.primary)
-            .font(.system(size: 25, weight: .bold))
-        }
-      }
-      .navigationBarTitleDisplayMode(.inline)
-      .onAppear {
-        updateDateRange()
-      }
-      .onChange(of: isMonthly) { _, _ in
-        updateDateRange()
-      }
-      .onChange(of: weekOffset) { _, _ in
-        updateDateRange()
-      }
-
-    }
-
-  }
 }
 
-#Preview {
-  NavigationStack {
-    StasticsView()
-  }
+protocol Ranking: Identifiable {
+  var value: String { get }
+  var rank: Int { get }
+  var count: Int { get }
 }
 
+extension Ranking {
+  var id: Int { rank }
+}
 
-
-// 중복제거용 모디파이어 따로 빼기
-struct PaddedBackgroundStyle: ViewModifier {
-  func body(content: Content) -> some View {
-    content
-      .padding(.horizontal, 16)
-      .frame(height: 30)
-      .background(Color.pWhiteBlack.opacity(0.5))
-      .clipShape(RoundedRectangle(cornerRadius: 10))
-      .compositingGroup()
-      .shadow(color: Color.pShadow.opacity(0.3), radius: 4, y:2)
 fileprivate struct StatisticsHeaderView: View {
   @Binding var selectedCategory: CategoryFilter
   
@@ -353,40 +237,13 @@ fileprivate struct StatisticsHeaderView: View {
   }
 }
 
-extension View {
-  func paddedBackgroundStyle() -> some View {
-    self.modifier(PaddedBackgroundStyle())
+#Preview {
+  ModelContainerPreview(ModelContainer.samples) {
+    NavigationStack {
+      StasticsView()
+    }
   }
 }
-
-
-
 /**
  주간 날짜 구하기 코드
  */
-func dateRangeLabel(from start: Date, to end: Date) -> String {
-  let formatter = DateFormatter()
-  formatter.locale = Locale(identifier: "ko_KR")
-  formatter.dateFormat = "M월 d일"
-  return "\(formatter.string(from: start)) ~ \(formatter.string(from: end))"
-}
-
-func monthLabel(from date: Date) -> String {
-  let formatter = DateFormatter()
-  formatter.locale = Locale(identifier: "ko_KR")
-  formatter.dateFormat = "M월"
-  return formatter.string(from: date)
-}
-
-/// 연도 라벨 동적 생성 함수: 같은 연도면 "2025년", 다르면 "2024년 ~ 2025년"
-func dynamicYearLabel(from start: Date, to end: Date) -> String {
-  let calendar = Calendar.current
-  let startYear = calendar.component(.year, from: start)
-  let endYear = calendar.component(.year, from: end)
-
-  if startYear == endYear {
-    return "\(startYear)년"
-  } else {
-    return "\(startYear)년 ~ \(endYear)년"
-  }
-}
