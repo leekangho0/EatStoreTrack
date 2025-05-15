@@ -1,5 +1,5 @@
-//
-//  SearchResultView.swift
+////
+////  SearchResultView.swift
 //  EatingApp
 //
 //  Created by drfranken on 5/13/25.
@@ -11,28 +11,13 @@
 import SwiftUI
 
 struct SearchResultView: View {
-  @Environment(\.dismiss) var dismiss
-  let selectedTags: Set<Int>
+  let selectedTags: [TagEntity]
+  let text: String
 
   var body: some View {
-    VStack {
-      Text("이 페이지는\nHomeView 완성되면 복붙합시다 ")
-      Text("선택된 태그 id: \(selectedTags)")
-
-    }
-    .navigationBarBackButtonHidden(true)
-    .toolbar {
-      ToolbarItem(placement: .navigationBarLeading) {
-        Button {
-          dismiss()
-        } label: {
-          Image(systemName: "chevron.left")
-        }
-      }
-
-      ToolbarItem(placement: .principal) {
-        Text("검색 결과")
-          .font(.headline)
+    NavigationStack {
+      VStack {
+        FeedListView(selectedTag: selectedTags, text: text)
       }
     }
   }
@@ -40,6 +25,6 @@ struct SearchResultView: View {
 
 #Preview {
   NavigationStack {
-    SearchResultView(selectedTags: Set([1, 2, 3]))
+//    SearchResultView(selectedTags: Set([1, 2, 3]))
   }
 }
