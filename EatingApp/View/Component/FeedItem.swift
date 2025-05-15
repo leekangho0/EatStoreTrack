@@ -31,6 +31,7 @@ struct FeedItem: View {
             Text(item.day)
               .font(.caption)
               .padding(.top)
+              
             
             Text(item.date)
               .font(.largeTitle)
@@ -51,7 +52,7 @@ struct FeedItem: View {
             
             Spacer()
           }
-          .foregroundStyle(.black)
+          .foregroundStyle(.primary)
           
           Rectangle()
             .foregroundStyle(.pText)
@@ -71,6 +72,7 @@ struct FeedItem: View {
               .font(.caption)
               .fontWeight(.light)
               .foregroundStyle(.accent)
+              
             
             Spacer()
             
