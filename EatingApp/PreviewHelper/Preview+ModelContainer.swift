@@ -46,8 +46,11 @@ extension ModelContainer {
       if defaultTags.isEmpty {
         logger.warning("Not Exist Default Tag")
         let tagEntity: [TagEntity] = [
-          .coffee, .dumbling, .multiVitamin, .noodle,
-         .ramen, .ramen, .sushi, .tea, .chicken
+          .coffee, .dumbling, .multiVitamin, .noodle, .ramen, .sushi, .tea, .chicken,
+          .beer, .wine, .milk, .juice, .water,
+          .hamburger, .pizza, .steak, .rice, .bread,
+          .banana, .apple, .grape, .strawberry, .watermelon,
+          .vitaminC, .omega3, .lactobacillus, .iron, .calcium
         ]
         
         tagEntity.forEach { tag in
@@ -61,8 +64,14 @@ extension ModelContainer {
   }
   
   static func loadSampleTagIfDebug(_ context: ModelContext) throws {
-    let feedEntities: [FeedEntity] = [.americano, .chicken, .multiVitamin,
-                                      .noodle, .ramen, .tea, .sushiAndDumbling]
+    let feedEntities: [FeedEntity] = [
+      .americano, .chicken, .multiVitamin, .noodle, .ramen, .tea, .sushiAndDumbling,
+      .steakDinner, .pizzaLunch, .morningBanana, .vitaminCMorning, .sundayWine,
+      .postWorkoutProtein, .appleSnack, .cafeLatte, .hamburgerLunch, .pizzaNight,
+      .calciumNight, .grapeDessert, .strawberryToast, .riceDinner,
+      .omega3Supplement, .breadBrunch, .watermelonSnack, .ironMorning,
+      .juiceSnack, .lactoNight
+    ]
     feedEntities.forEach { entity in
       context.insert(entity)
     }
