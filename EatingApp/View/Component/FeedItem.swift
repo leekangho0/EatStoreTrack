@@ -11,14 +11,14 @@ struct FeedItem: View {
   let item: FeedEntity
   let onEdit: () -> Void
   let onDelete: () -> Void
-  
+
   var body: some View {
     VStack(alignment: .trailing) {
       HStack {
         Button(action: onEdit) {
           Image(systemName: "square.and.pencil")
         }
-        
+
         Button(action: onDelete) {
           Image(systemName: "trash")
         }
@@ -31,32 +31,32 @@ struct FeedItem: View {
             Text(item.day)
               .font(.caption)
               .padding(.top)
-            
+
             Text(item.date)
               .font(.largeTitle)
               .bold()
-            
+
             Text(item.time)
               .font(.caption2)
               .fontWeight(.bold)
-            
+
             Spacer()
-            
+
             if let category = Category(rawValue: item.category) {
               category.icon
                 .resizable()
                 .scaledToFit()
                 .frame(width: 80, height: 80)
             }
-            
+
             Spacer()
           }
           .foregroundStyle(.black)
-          
+
           Rectangle()
             .foregroundStyle(.pText)
             .frame(maxWidth: 1.5, maxHeight: .infinity)
-          
+
           VStack(alignment: .leading) {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4)) {
               ForEach(item.tags) { tag in
@@ -66,14 +66,14 @@ struct FeedItem: View {
               }
             }
             .frame(maxWidth: .infinity)
-            
+
             Text(item.content)
               .font(.caption)
               .fontWeight(.light)
               .foregroundStyle(.accent)
-            
+
             Spacer()
-            
+
             defaultImage()
               .frame(width: 200, height: 200)
               .background {
@@ -115,13 +115,13 @@ extension FeedEntity {
     formatter.locale = Locale(identifier: "ko_kr")
     return formatter.string(from: createdDate)
   }
-  
+
   var date: String {
     let calendar = Calendar.current
     let component = calendar.dateComponents([.day], from: createdDate)
     return String(component.day ?? 1)
   }
-  
+
   var time: String {
     let formatter = DateFormatter()
     formatter.dateFormat = "HH:mm a"
@@ -131,10 +131,10 @@ extension FeedEntity {
 }
 
 #Preview {
-  FeedItem(item: .chicken, onEdit: {
-    
-  }, onDelete: {
-    
-  })
+  FeedItem(
+    item: FeedEntity.feedSamples.first(where: { $0.content == "치킨 먹음" })!,
+    onEdit: {},
+    onDelete: {}
+  )
   .frame(width: 300, height: 300)
 }
