@@ -52,13 +52,13 @@ struct StasticsView: View {
           }
           
           Text("이 기간동안 총 \(feedCount)개 기록했어요")
-            .foregroundStyle(Color.accentColor)
+            .foregroundStyle(Color.primary)
             .padding(20)
           .frame(maxWidth: .infinity)
-          .background(RoundedRectangle(cornerRadius: 16).foregroundColor(Color.white.opacity(0.9)))
+          .background(RoundedRectangle(cornerRadius: 16).foregroundColor(Color.pWhiteBlack.opacity(0.9)))
           if filteredFeeds.isEmpty {
             ContentUnavailableView("오늘 하루 먹은 걸 기록해보세요!", systemImage: "spoon.serving", description: Text("식사, 간식, 음료 모두"))
-              .foregroundStyle(.accent)
+              .foregroundStyle(.primary)
           } else {
             VStack {
               HStack {

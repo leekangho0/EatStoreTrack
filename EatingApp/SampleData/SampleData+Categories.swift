@@ -11,11 +11,11 @@ import SwiftData
 extension FeedEntity {
   static func insertSampleData(modelContext: ModelContext) {
     let tagEntity: [TagEntity] = [
-//      .coffee, .dumbling, .multiVitamin, .noodle, .ramen, .sushi, .tea, .chicken,
-//      .beer, .wine, .milk, .juice, .water,
-//      .hamburger, .pizza, .steak, .rice, .bread,
-//      .banana, .apple, .grape, .strawberry, .watermelon,
-//      .vitaminC, .omega3, .lactobacillus, .iron, .calcium
+      .coffee, .dumbling, .multiVitamin, .noodle, .ramen, .sushi, .tea, .chicken,
+      .beer, .wine, .milk, .juice, .water,
+      .hamburger, .pizza, .steak, .rice, .bread,
+      .banana, .apple, .grape, .strawberry, .watermelon,
+      .vitaminC, .omega3, .lactobacillus, .iron, .calcium
     ]
 
     tagEntity.forEach { tag in
@@ -24,7 +24,8 @@ extension FeedEntity {
     }
 
     let feedEntities: [FeedEntity] = [
-//      .americano, .chicken, .multiVitamin, .noodle, .ramen, .tea, .sushiAndDumbling,
+//      .americano, .chicken, .multiVitamin,
+      .noodle, .ramen, .tea, .sushiAndDumbling,
 //      .steakDinner, .pizzaLunch, .morningBanana, .vitaminCMorning, .sundayWine,
 //      .postWorkoutProtein, .appleSnack, .cafeLatte, .hamburgerLunch, .pizzaNight,
 //      .calciumNight, .grapeDessert, .strawberryToast, .riceDinner,

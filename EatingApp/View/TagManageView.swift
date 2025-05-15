@@ -93,7 +93,7 @@ struct TagGridView: View {
                 .padding()
               Text(tag.name)
                 .font(.caption)
-                .foregroundStyle(.black)
+                .foregroundStyle(.primary)
                 .padding(.bottom, 4)
             }
             .padding(.horizontal, 4)

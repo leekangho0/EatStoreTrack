@@ -64,17 +64,30 @@ extension ModelContainer {
   }
   
   static func loadSampleTagIfDebug(_ context: ModelContext) throws {
-    let feedEntities: [FeedEntity] = [
-      .americano, .chicken, .multiVitamin, .noodle, .ramen, .tea, .sushiAndDumbling,
-      .steakDinner, .pizzaLunch, .morningBanana, .vitaminCMorning, .sundayWine,
-      .postWorkoutProtein, .appleSnack, .cafeLatte, .hamburgerLunch, .pizzaNight,
-      .calciumNight, .grapeDessert, .strawberryToast, .riceDinner,
-      .omega3Supplement, .breadBrunch, .watermelonSnack, .ironMorning,
-      .juiceSnack, .lactoNight
-    ]
-    feedEntities.forEach { entity in
-      context.insert(entity)
+    let descriptor = FetchDescriptor<FeedEntity>()
+    let defaultFeeds = try context.fetch(descriptor)
+
+    if defaultFeeds.isEmpty {
+      let feedEntities: [FeedEntity] = [
+        .americano, .chicken, .multiVitamin, .noodle, .ramen, .tea, .sushiAndDumbling,
+        .steakDinner, .pizzaLunch, .morningBanana, .vitaminCMorning, .sundayWine,
+        .postWorkoutProtein, .appleSnack, .cafeLatte, .hamburgerLunch, .pizzaNight,
+        .calciumNight, .grapeDessert, .strawberryToast, .riceDinner,
+        .omega3Supplement, .breadBrunch, .watermelonSnack, .ironMorning,
+        .juiceSnack, .lactoNight
+      ]
+
+      feedEntities.forEach { entity in
+        context.insert(entity)
+      }
+
+      try context.save()
+    } else {
+      logger.info("Default Tags Already Exists")
     }
-    logger.info("Default Tags Already Exists")
+
+
+
+
   }
 }
