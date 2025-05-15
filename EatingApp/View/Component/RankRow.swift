@@ -24,8 +24,8 @@ struct RankRow<C: Ranking>: View {
 //        Spacer().frame(width: 20)
         Text("\(rank.count)회")
       }
-      .foregroundStyle(Color.pBack1)
-      
+      .foregroundStyle(Color.primary)
+
       
     }
     .padding(10)

@@ -64,7 +64,7 @@ struct HomeView: View {
       .toolbar {
         ToolbarItemGroup(placement: .navigationBarLeading) {
           HStack {
-            VStack(alignment: .leading, spacing: -3) {
+            HStack {
               Text(selectedYear.year())
                 .font(.callout)
               Text(selectedYear.month())

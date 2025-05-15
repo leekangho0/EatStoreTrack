@@ -51,7 +51,7 @@ struct StasticsView: View {
             .foregroundStyle(Color.accentColor)
             .padding(20)
           .frame(maxWidth: .infinity)
-          .background(RoundedRectangle(cornerRadius: 16).foregroundColor(Color.white.opacity(0.9)))
+          .background(RoundedRectangle(cornerRadius: 16).foregroundColor(Color.pWhiteBlack.opacity(0.9)))
           
           VStack {
             ForEach(dailyUsage()) { rank in
