@@ -14,6 +14,6 @@ struct EatingAppApp: App {
         WindowGroup {
             FirstView()
         }
-        .modelContainer(ModelContainer.initialize(inMemory: true))
+        .modelContainer(ModelContainer.initialize(inMemory: false))
     }
 }

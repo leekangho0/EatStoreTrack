@@ -10,8 +10,6 @@ import SwiftData
 
 struct HomeView: View {
   
-  @Query(sort: \FeedEntity.createdDate, order: .reverse) var feeds: [FeedEntity]
-  
   @State var selectedYear = Date()
   @State var isSelectedPlusButton: Bool = false
   @State var seletedCategory: Category?

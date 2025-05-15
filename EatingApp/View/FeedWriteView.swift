@@ -194,7 +194,11 @@ extension FeedWriteView {
       )
       modelContext.insert(newFeed)
       
-      try? modelContext.save()
+      do {
+        try modelContext.save()
+      } catch {
+        modelContext.rollback()
+      }
     }
     
     dismiss()

@@ -11,7 +11,7 @@ import SwiftData
 struct FeedListView: View {
   @Environment(\.modelContext) var modelContext
   
-  @Query(sort: \FeedEntity.createdDate)
+  @Query(sort: \FeedEntity.createdDate, order: .reverse)
   var items: [FeedEntity]
   @State var showDelete = false
   @State private var selectedFeed: FeedEntity?

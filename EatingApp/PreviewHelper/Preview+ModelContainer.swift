@@ -44,6 +44,7 @@ extension ModelContainer {
       let defaultTags = try context.fetch(descriptor)
       
       if defaultTags.isEmpty {
+        logger.warning("Not Exist Default Tag")
         let tagEntity: [TagEntity] = [
           .coffee, .dumbling, .multiVitamin, .noodle,
          .ramen, .ramen, .sushi, .tea, .chicken
