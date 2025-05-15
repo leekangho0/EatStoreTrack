@@ -99,3 +99,4 @@ let sampleTags: [TagModel] = [
   TagModel(id: 28, name: "딸기우유", emoji: "🥛", category_id: 2, use_yn: "Y"),
   TagModel(id: 29, name: "식혜", emoji: "🍶", category_id: 2, use_yn: "Y")
 ]
+
