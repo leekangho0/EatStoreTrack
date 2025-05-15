@@ -15,6 +15,31 @@ struct FeedListView: View {
   var items: [FeedEntity]
   @State var showDelete = false
   @State private var selectedFeed: FeedEntity?
+  let selectedTag: [TagEntity]
+  
+  init(selectedDate: Date) {
+    let calendar = Calendar.current
+    let components = calendar.dateComponents([.year, .month], from: selectedDate)
+    let startOfMonth = calendar.date(from: components) ?? .now
+    let endOfMonth = calendar.date(byAdding: DateComponents(month: 1, day: -1),to: startOfMonth) ?? .now
+    
+    let predicate = #Predicate<FeedEntity> { feed in
+      feed.createdDate >= startOfMonth && feed.createdDate <= endOfMonth
+    }
+    let sort = [SortDescriptor(\FeedEntity.createdDate, order: .reverse)]
+    selectedTag = []
+    
+    _items = Query(filter: predicate, sort: sort, animation: .bouncy)
+  }
+  
+  init(selectedTag: [TagEntity], text: String) {
+    let sort = [SortDescriptor(\FeedEntity.createdDate, order: .reverse)]
+    
+    self.selectedTag = selectedTag
+    _items = Query(filter: #Predicate<FeedEntity> {
+      $0.content.localizedStandardContains(text)
+    }, sort: sort, animation: .bouncy)
+  }
   
   init(selectedDate: Date) {
     let calendar = Calendar.current
