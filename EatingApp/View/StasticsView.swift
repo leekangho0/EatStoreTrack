@@ -20,6 +20,8 @@ struct StasticsView: View {
   @State var startDate: Date = Date()
   @State var endDate: Date = Date()
 
+  var feedCount: Int = 0
+
 
   // startDate 와 endDate 를 계산해주는 함수
   func updateDateRange() {
@@ -65,8 +67,10 @@ struct StasticsView: View {
 
           HStack {
             Picker("월간주간 선택", selection: $isMonthly) {
-              Text("월간").tag(true)
-              Text("주간").tag(false)
+              Text("월간")
+                .tag(true)
+              Text("주간")
+                .tag(false)
             }
             .pickerStyle(.palette)
             .padding()
@@ -173,29 +177,41 @@ struct StasticsView: View {
               }
             }
 
-            VStack {
-              Text("디버깅용")
-              Text("startDate: \(DateFormatter.localizedString(from: startDate, dateStyle: .medium, timeStyle: .none))")
-              Text("endDate: \(DateFormatter.localizedString(from: endDate, dateStyle: .medium, timeStyle: .none))")
+            HStack {
+              Spacer()
+              Text("이 기간동안 총 \(feedCount)개 기록했어요")
+              Spacer()
             }
+            .padding(20)
+            .foregroundStyle(Color.accentColor)
+            .background(RoundedRectangle(cornerRadius: 16).foregroundColor(Color.white.opacity(0.9)))
+
+
+//            VStack {
+//              Text("디버깅용")
+//              Text("startDate: \(DateFormatter.localizedString(from: startDate, dateStyle: .medium, timeStyle: .none))")
+//              Text("endDate: \(DateFormatter.localizedString(from: endDate, dateStyle: .medium, timeStyle: .none))")
+//            }
           }
+          .foregroundStyle(Color.accentColor)
+          .tint(Color.accentColor)
 
 
           ScrollView {
 
 
             // TODO: 데이터를 실시간으로 계산해서 가져올건데, 어떤 형식으로 가져올지 고민필요. 일단 이렇게 만듬
-            let sampleTopRanks: [(rank: Int, emoji: String, count: Int)] = [
-              (1, "🐰", 10),
-              (2, "🐶", 9),
-              (3, "🐱", 8),
-              (4, "🦊", 7),
-              (5, "🐻", 6),
-              (6, "🐼", 5),
-              (7, "🐨", 4),
-              (8, "🐯", 3),
-              (9, "🦁", 2),
-              (10, "🐷", 1)
+            let sampleTopRanks: [(rank: Int, name: String, emoji: String, count: Int)] = [
+              (1, "토끼", "🐰", 10),
+              (2, "강아지", "🐶", 9),
+              (3, "고양이", "🐱", 8),
+              (4, "여우", "🦊", 7),
+              (5, "곰", "🐻", 6),
+              (6, "판다", "🐼", 5),
+              (7, "코알라", "🐨", 4),
+              (8, "호랑이", "🐯", 3),
+              (9, "사자", "🦁", 2),
+              (10, "돼지", "🐷", 1)
             ]
 
             ForEach(sampleTopRanks, id: \.rank) { rank in
@@ -206,9 +222,14 @@ struct StasticsView: View {
 
                 Spacer()
 
-                Text("\(rank.emoji) \(rank.count)회")
-                  .font(.title)
-                  .foregroundStyle(Color.pBack1)
+                Group {
+                  Text("\(rank.emoji)")
+                  Text("\(rank.name)").font(.title3)
+                  Spacer().frame(width: 20)
+                  Text("\(rank.count)회")
+                }
+                .font(.title)
+                .foregroundStyle(Color.pBack1)
 
 
               }
