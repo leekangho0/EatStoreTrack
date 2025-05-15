@@ -21,7 +21,7 @@ struct HomeView: View {
     NavigationStack {
       VStack {
       FeedListView()
-        .padding(.top, 40)
+        .padding(.top, 20)
       }
       .overlay {
         VStack(alignment: .trailing) {
