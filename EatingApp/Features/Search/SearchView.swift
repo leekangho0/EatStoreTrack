@@ -21,31 +21,33 @@ struct SearchView: View {
         .ignoresSafeArea()
 
       VStack {
-        Spacer().frame(minHeight: 20, maxHeight: 30)
-        TextField("키위소스듬뿍김밥", text: $searchText)
-          .padding(10)
-          .background(
-            RoundedRectangle(cornerRadius: 8)
-              .fill(Color.pWhiteBlack.opacity(0.7))
-          )
-          .padding()
+        FeedListView(selectedTag: [], text: searchText)
+//        Spacer().frame(minHeight: 20, maxHeight: 30)
+//        TextField("키위소스듬뿍김밥", text: $searchText)
+//          .padding(10)
+//          .background(
+//            RoundedRectangle(cornerRadius: 8)
+//              .fill(Color.pWhiteBlack.opacity(0.7))
+//          )
+//          .padding()
       }
-      VStack {
-        Spacer()
-        Button {
-          navigateToResult = true
-        } label: {
-          Image(systemName: "magnifyingglass")
-            .font(.largeTitle)
-            .frame(maxWidth: .infinity)
-            .frame(height: 50)
-            .padding(.vertical, 4)
-            .background(.pAccent2)
-            .clipShape(.buttonBorder)
-        }
-        .padding(20)
-      }
+//      VStack {
+//        Spacer()
+//        Button {
+//          navigateToResult = true
+//        } label: {
+//          Image(systemName: "magnifyingglass")
+//            .font(.largeTitle)
+//            .frame(maxWidth: .infinity)
+//            .frame(height: 50)
+//            .padding(.vertical, 4)
+//            .background(.pAccent2)
+//            .clipShape(.buttonBorder)
+//        }
+//        .padding(20)
+//      }
     }
+    .searchable(text: $searchText)
     .toolbar {
       ToolbarItem(placement: .principal) {
         Text("검색")
