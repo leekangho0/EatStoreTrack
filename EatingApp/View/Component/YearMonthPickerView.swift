@@ -51,7 +51,7 @@ struct HYearMonthPickerView: View {
 
           Text(dateRangeLabel(from: startDate, to: endDate))
             .paddedBackgroundStyle()
-            .font(.title3)
+            .font(.callout)
 
 
           Button {
