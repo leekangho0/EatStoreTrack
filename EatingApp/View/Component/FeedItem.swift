@@ -14,7 +14,7 @@ struct FeedItem: View {
   
   var body: some View {
     VStack(alignment: .trailing) {
-      HStack {
+      HStack(spacing: 20) {
         Button(action: onEdit) {
           Image(systemName: "square.and.pencil")
         }
@@ -78,7 +78,7 @@ struct FeedItem: View {
               .frame(width: 200, height: 200)
               .background {
                 Rectangle()
-                  .foregroundStyle(.pText)
+                  .foregroundStyle(.pText.opacity(0.6)) // TODO: 배경색
               }
               .clipShape(RoundedRectangle(cornerRadius: Metric.cornerRadius))
           }
