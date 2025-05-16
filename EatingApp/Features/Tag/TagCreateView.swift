@@ -114,8 +114,13 @@ struct TagCreateView: View {
 
 extension TagCreateView {
   func addTag() {
-    let tag = TagEntity(name: tagName, emoji: tagEmoji, category: selectedCategory)
-    modelContext.insert(tag)
+    if let tag {
+      tag.emoji = tagEmoji
+      tag.name = tagName
+    } else {
+      let tag = TagEntity(name: tagName, emoji: tagEmoji, category: selectedCategory)
+      modelContext.insert(tag)
+    }
     
     dismiss()
   }
